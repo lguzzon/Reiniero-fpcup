@@ -41,11 +41,17 @@ Adapt (add) for other setups
 interface
 
 uses
+<<<<<<< HEAD
   Classes, SysUtils, m_crossinstaller,fpcuputil,fileutil;
 
 implementation
 const
   CrossModuleName='Tany_androidjvm';
+=======
+  Classes, SysUtils, m_crossinstaller,fileutil, fpcuputil;
+
+implementation
+>>>>>>> upstream/master
 
 type
 
@@ -53,18 +59,24 @@ type
 Tany_androidjvm = class(TCrossInstaller)
 private
   FAlreadyWarned: boolean; //did we warn user about errors and fixes already?
+<<<<<<< HEAD
   function TargetSignature: string;
 public
   function GetLibs(Basepath:string):boolean;override;
   {$ifndef FPCONLY}
   function GetLibsLCL(LCL_Platform:string; Basepath:string):boolean;override;
   {$endif}
+=======
+public
+  function GetLibs(Basepath:string):boolean;override;
+>>>>>>> upstream/master
   function GetBinUtils(Basepath:string):boolean;override;
   constructor Create;
   destructor Destroy; override;
 end;
 
 { Tany_androidjvm }
+<<<<<<< HEAD
 function Tany_androidjvm.TargetSignature: string;
 begin
   result:=FTargetCPU+'-'+TargetOS;
@@ -90,12 +102,35 @@ begin
   inherited;
   FBinUtilsPath:=ExtractFilePath(Which('java'+GetExeExt));
   result:=True;
+=======
+
+function Tany_androidjvm.GetLibs(Basepath:string): boolean;
+begin
+  result:=FLibsFound;
+  if result then exit;
+  //FLibsPath:='where is jasmin.jar'
+  //for now, jasmin.jar will be downloaded into normal bin-dir !!
+  result:=True;
+  FLibsFound:=True;
+end;
+
+function Tany_androidjvm.GetBinUtils(Basepath:string): boolean;
+begin
+  result:=inherited;
+  if result then exit;
+  FBinUtilsPath:=ExtractFilePath(Which('java'+GetExeExt));
+  result:=True;
+  FBinsFound:=true;
+>>>>>>> upstream/master
 end;
 
 constructor Tany_androidjvm.Create;
 begin
   inherited Create;
+<<<<<<< HEAD
   FCrossModuleName:='any_androidjvm';
+=======
+>>>>>>> upstream/master
   FBinUtilsPrefix:='';
   FBinUtilsPath:='';
   FFPCCFGSnippet:='';
@@ -103,7 +138,11 @@ begin
   FTargetCPU:='jvm';
   FTargetOS:='android';
   FAlreadyWarned:=false;
+<<<<<<< HEAD
   infoln('Tany_androidjvm crosscompiler loading',etDebug);
+=======
+  ShowInfo;
+>>>>>>> upstream/master
 end;
 
 destructor Tany_androidjvm.Destroy;

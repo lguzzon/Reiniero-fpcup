@@ -30,7 +30,7 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 {
 based on cross binaries from
-http://svn2.freepascal.org/svn/fpcbuild/binaries/i386-win32/
+http://svn.freepascal.org/svn/fpcbuild/binaries/i386-win32/
 
 Add a cross directory under the fpcup "root" installdir directory (e.g. c:\development\cross, and e.g. regular fpc sources in c:\development\fpc)
 Then place the binaries in c:\development\cross\bin\mips-linux
@@ -57,7 +57,7 @@ See page 15 of the getting started manual for the layout of lib and relation to 
 interface
 
 uses
-  Classes, SysUtils, m_crossinstaller,fpcuputil;
+  Classes, SysUtils, m_crossinstaller;
 
 implementation
 type
@@ -66,7 +66,6 @@ type
 Twin32_linuxmips = class(TCrossInstaller)
 private
   FAlreadyWarned: boolean; //did we warn user about errors and fixes already?
-  function TargetSignature: string;
 public
   function GetLibs(Basepath:string):boolean;override;
   {$ifndef FPCONLY}
@@ -78,32 +77,42 @@ public
 end;
 
 { Twin32_linuxmips }
-function Twin32_linuxmips.TargetSignature: string;
-begin
-  result:=FTargetCPU+'-'+TargetOS;
-end;
 
 function Twin32_linuxmips.GetLibs(Basepath:string): boolean;
 const
   DirName='mips-linux';
   LibName='libc.so';
 begin
+<<<<<<< HEAD
+=======
+  result:=FLibsFound;
+  if result then exit;
+>>>>>>> upstream/master
 
   // begin simple: check presence of library file in basedir
   result:=SearchLibrary(Basepath,LibName);
 
   // first search local paths based on libbraries provided for or adviced by fpc itself
   if not result then
+<<<<<<< HEAD
     result:=SimpleSearchLibrary(BasePath,DirName);
+=======
+    result:=SimpleSearchLibrary(BasePath,DirName,LibName);
+>>>>>>> upstream/master
 
   if result then
   begin
+    FLibsFound:=true;
     //todo: check if -XR is needed for fpc root dir Prepend <x> to all linker search paths
     FFPCCFGSnippet:=FFPCCFGSnippet+LineEnding+
     '-Fl'+IncludeTrailingPathDelimiter(FLibsPath)+LineEnding+ {buildfaq 1.6.4/3.3.1: the directory to look for the target  libraries}
     '-Xr/usr/lib';//+LineEnding+ {buildfaq 3.3.1: makes the linker create the binary so that it searches in the specified directory on the target system for libraries}
     //'-FL/usr/lib/ld-linux.so.2' {buildfaq 3.3.1: the name of the dynamic linker on the target};
+<<<<<<< HEAD
     infoln('Twin32_linuxmips: found libspath '+FLibsPath,etInfo);
+=======
+    ShowInfo('Found libspath '+FLibsPath,etInfo);
+>>>>>>> upstream/master
   end;
 end;
 
@@ -111,7 +120,7 @@ end;
 function Twin32_linuxmips.GetLibsLCL(LCL_Platform: string; Basepath: string): boolean;
 begin
   // todo: get gtk at least
-  result:=true;
+  result:=inherited;
 end;
 {$endif}
 
@@ -121,7 +130,12 @@ const
 var
   AsFile: string;
 begin
+<<<<<<< HEAD
   inherited;
+=======
+  result:=inherited;
+  if result then exit;
+>>>>>>> upstream/master
 
   AsFile:=FBinUtilsPrefix+'as.exe';
 
@@ -131,7 +145,12 @@ begin
 
   if result then
   begin
+<<<<<<< HEAD
     infoln(FCrossModuleName + ': found binutils '+FBinUtilsPath,etInfo);
+=======
+    FBinsFound:=true;
+    ShowInfo('Found binutils '+FBinUtilsPath,etInfo);
+>>>>>>> upstream/master
     // Configuration snippet for FPC
     FFPCCFGSnippet:=FFPCCFGSnippet+LineEnding+
     '-FD'+IncludeTrailingPathDelimiter(FBinUtilsPath)+LineEnding+ {search this directory for compiler utilities}
@@ -143,7 +162,7 @@ end;
 constructor Twin32_linuxmips.Create;
 begin
   inherited Create;
-  FCrossModuleName:='win32_linuxmips';
+  FCrossModuleNamePrefix:='TWinAll';
   FBinUtilsPrefix:='mips-linux-';
   FBinUtilsPath:='';
   FFPCCFGSnippet:='';
@@ -151,7 +170,7 @@ begin
   FTargetCPU:='mips'; //mips: fpc 2.7+ only; FPC 2.6 does not support mips
   FTargetOS:='linux';
   FAlreadyWarned:=false;
-  infoln('Twin32_linuxmips crosscompiler loading',etDebug);
+  ShowInfo;
 end;
 
 destructor Twin32_linuxmips.Destroy;

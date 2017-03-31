@@ -68,7 +68,11 @@ Const
     // Lazbuild: make sure we can at least compile LCL programs
     'Do lazbuild;'+
     'Do helplazarus;'+
+<<<<<<< HEAD
     'Do DOCEDITOR;'+
+=======
+    //'Do DOCEDITOR;'+
+>>>>>>> upstream/master
     //Get default external packages/universal modules
     'Do UniversalDefault;'+
     //Recompile user IDE so any packages selected by the
@@ -89,7 +93,11 @@ Const
     // Lazbuild: make sure we can at least compile LCL programs
     'Do lazbuild;'+
     'Do helplazarus;'+
+<<<<<<< HEAD
     'Do DOCEDITOR;'+
+=======
+    //'Do DOCEDITOR;'+
+>>>>>>> upstream/master
     // Get default external packages/universal modules
     'Do UniversalDefault;'+
     // Recompile user IDE so any packages selected by the
@@ -128,7 +136,11 @@ below}
     // Lazbuild: make sure we can at least compile LCL programs
     'Do lazbuild;'+
     'Do helplazarus;'+
+<<<<<<< HEAD
     'Do DOCEDITOR;'+
+=======
+    //'Do DOCEDITOR;'+
+>>>>>>> upstream/master
     //Get default external packages/universal modules
     'Do UniversalDefault;'+
     //Recompile user IDE so any packages selected by the
@@ -175,7 +187,11 @@ below}
     {$ifndef FPCONLY}
     'Do lazarusclean;'+
     'Do helplazarusclean;'+
+<<<<<<< HEAD
     'CleanModule DOCEDITOR;'+
+=======
+    //'CleanModule DOCEDITOR;'+
+>>>>>>> upstream/master
     'Do UniversalDefaultClean;'+
     {$endif}
     'End;'+
@@ -190,7 +206,11 @@ below}
     {$ifndef FPCONLY}
     'Do lazarusclean;'+
     'Do helplazarusclean;'+
+<<<<<<< HEAD
     'CleanModule DOCEDITOR;'+
+=======
+    //'CleanModule DOCEDITOR;'+
+>>>>>>> upstream/master
     'Do UniversalDefaultClean;'+
     {$endif}
     'Do crosswin32-64Clean;'+   //this has to be the last. All TExecState reset!
@@ -221,7 +241,11 @@ below}
     {$ifndef FPCONLY}
     'Do lazarusuninstall;'+
     'Do helpuninstall;'+
+<<<<<<< HEAD
     'UninstallModule DOCEDITOR;'+
+=======
+    //'UninstallModule DOCEDITOR;'+
+>>>>>>> upstream/master
     'Do UniversalDefaultUnInstall;'+
     {$endif}
     'End;'+
@@ -239,11 +263,17 @@ below}
 type
   TSequencer=class; //forward
 
+  TResultCodes=(rMissingCrossLibs,rMissingCrossBins);
+  TResultSet = Set of TResultCodes;
 
   { TFPCupManager }
 
   TFPCupManager=class(Tobject)
   private
+<<<<<<< HEAD
+=======
+    FResultSet:TResultSet;
+>>>>>>> upstream/master
     FSVNExecutable: string;
     FHTTPProxyHost: string;
     FHTTPProxyPassword: string;
@@ -264,13 +294,16 @@ type
     FCrossOS_Target: string;
     FCrossOS_SubArch: string;
     FFPCDesiredRevision: string;
-    FFPCDirectory: string;
+    FFPCDesiredBranch: string;
+    FFPCSourceDirectory: string;
+    FFPCInstallDirectory: string;
     FFPCOPT: string;
     FFPCURL: string;
     FIncludeModules: string;
     FKeepLocalDiffs: boolean;
     {$ifndef FPCONLY}
     FLazarusDesiredRevision: string;
+    FLazarusDesiredBranch: string;
     FLazarusDirectory: string;
     FLazarusOPT: string;
     FLazarusPrimaryConfigPath: string;
@@ -293,6 +326,10 @@ type
     {$endif}
     FUninstall:boolean;
     FVerbose: boolean;
+<<<<<<< HEAD
+=======
+    FUseWget: boolean;
+>>>>>>> upstream/master
     FExportOnly:boolean;
     FNoJobs:boolean;
     FUseGitClient:boolean;
@@ -304,20 +341,28 @@ type
     {$endif}
     function GetLogFileName: string;
     procedure SetBootstrapCompilerDirectory(AValue: string);
-    procedure SetFPCDirectory(AValue: string);
+    procedure SetFPCSourceDirectory(AValue: string);
+    procedure SetFPCInstallDirectory(AValue: string);
     procedure SetFPCURL(AValue: string);
     procedure SetCrossToolsDirectory(AValue: string);
     procedure SetCrossLibraryDirectory(AValue: string);
     procedure SetLogFileName(AValue: string);
     procedure SetMakeDirectory(AValue: string);
+    function GetUseWget:boolean;
   protected
     FLog:TLogger;
     FModuleList:TStringList;
     FModuleEnabledList:TStringList;
     FModulePublishedList:TStringList;
     // Write msg to log with line ending. Can also write to console
-    procedure WritelnLog(msg:string;ToConsole:boolean=true);
+    procedure WritelnLog(msg:string;ToConsole:boolean=true);overload;
+    procedure WritelnLog(EventType: TEventType;msg:string;ToConsole:boolean=true);overload;
  public
+<<<<<<< HEAD
+=======
+    property ResultSet: TResultSet read FResultSet;
+    property Sequencer: TSequencer read FSequencer;
+>>>>>>> upstream/master
    {$ifndef FPCONLY}
     property ShortCutNameLazarus: string read FShortCutNameLazarus write FShortCutNameLazarus; //Name of the shortcut that points to the fpcup-installed Lazarus
     {$endif}
@@ -347,10 +392,16 @@ type
     property CrossOS_SubArch:string read FCrossOS_SubArch write FCrossOS_SubArch;
     property CrossToolsDirectory:string read FCrossToolsDirectory write SetCrossToolsDirectory;
     property CrossLibraryDirectory:string read FCrossLibraryDirectory write SetCrossLibraryDirectory;
+<<<<<<< HEAD
     property FPCDirectory: string read FFPCDirectory write SetFPCDirectory;
+=======
+    property FPCSourceDirectory: string read FFPCSourceDirectory write SetFPCSourceDirectory;
+    property FPCInstallDirectory: string read FFPCInstallDirectory write SetFPCInstallDirectory;
+>>>>>>> upstream/master
     property FPCURL: string read FFPCURL write SetFPCURL;
     property FPCOPT: string read FFPCOPT write FFPCOPT;
     property FPCDesiredRevision: string read FFPCDesiredRevision write FFPCDesiredRevision;
+    property FPCDesiredBranch: string read FFPCDesiredBranch write FFPCDesiredBranch;
     property HTTPProxyHost: string read FHTTPProxyHost write FHTTPProxyHost;
     property HTTPProxyPassword: string read FHTTPProxyPassword write FHTTPProxyPassword;
     property HTTPProxyPort: integer read FHTTPProxyPort write FHTTPProxyPort;
@@ -362,6 +413,10 @@ type
     property LazarusURL: string read FLazarusURL write SetLazarusURL;
     property LazarusOPT:string read FLazarusOPT write FLazarusOPT;
     property LazarusDesiredRevision:string read FLazarusDesiredRevision write FLazarusDesiredRevision;
+<<<<<<< HEAD
+=======
+    property LazarusDesiredBranch:string read FLazarusDesiredBranch write FLazarusDesiredBranch;
+>>>>>>> upstream/master
     {$endif}
     // Location where fpcup log will be written to.
     property LogFileName: string read GetLogFileName write SetLogFileName;
@@ -389,6 +444,10 @@ type
     property OnlyModules:string read FOnlyModules write FOnlyModules;
     property Uninstall: boolean read FUninstall write FUninstall;
     property Verbose:boolean read FVerbose write FVerbose;
+<<<<<<< HEAD
+=======
+    property UseWget:boolean read GetUseWget write FUseWget;
+>>>>>>> upstream/master
     property ExportOnly:boolean read FExportOnly write FExportOnly;
     property NoJobs:boolean read FNoJobs write FNoJobs;
     property UseGitClient:boolean read FUseGitClient write FUseGitClient;
@@ -445,9 +504,14 @@ type
       function GetText:string;
       function IsSkipped(ModuleName:string):boolean;
       // Reset memory of executed steps, allowing sequences with e.g. new OS to be rerun
-      procedure ResetAllExecuted(SkipFPC:boolean=false);
     public
+      // set Executed to ESNever for all sequences
+      procedure ResetAllExecuted(SkipFPC:boolean=false);
       property Parent:TFPCupManager write Fparent;
+<<<<<<< HEAD
+=======
+      property Installer:TInstaller read FInstaller;
+>>>>>>> upstream/master
       // Text representation of sequence; for diagnostic purposes
       property Text:String read GetText;
       // parse a sequence source code and append to the FStateMachine
@@ -464,8 +528,15 @@ type
 
 implementation
 
+<<<<<<< HEAD
 uses
   processutils;
+=======
+{$ifdef linux}
+uses
+  processutils;
+{$endif}
+>>>>>>> upstream/master
 
 { TFPCupManager }
 
@@ -501,11 +572,20 @@ begin
   FBootstrapCompilerDirectory:=ExcludeTrailingPathDelimiter(SafeExpandFileName(AValue));
 end;
 
-procedure TFPCupManager.SetFPCDirectory(AValue: string);
+procedure TFPCupManager.SetFPCSourceDirectory(AValue: string);
 begin  
-  FFPCDirectory:=SafeExpandFileName(AValue);
+  FFPCSourceDirectory:=SafeExpandFileName(AValue);
 end;
 
+<<<<<<< HEAD
+=======
+procedure TFPCupManager.SetFPCInstallDirectory(AValue: string);
+begin
+  FFPCInstallDirectory:=SafeExpandFileName(AValue);
+end;
+
+
+>>>>>>> upstream/master
 procedure TFPCupManager.SetFPCURL(AValue: string);
 begin
   if FFPCURL=AValue then Exit;
@@ -518,12 +598,22 @@ end;
 
 procedure TFPCupManager.SetCrossToolsDirectory(AValue: string);
 begin
+<<<<<<< HEAD
   FCrossToolsDirectory:=SafeExpandFileName(AValue);
+=======
+  //FCrossToolsDirectory:=SafeExpandFileName(AValue);
+  FCrossToolsDirectory:=AValue;
+>>>>>>> upstream/master
 end;
 
 procedure TFPCupManager.SetCrossLibraryDirectory(AValue: string);
 begin
+<<<<<<< HEAD
   FCrossLibraryDirectory:=SafeExpandFileName(AValue);
+=======
+  //FCrossLibraryDirectory:=SafeExpandFileName(AValue);
+  FCrossLibraryDirectory:=AValue;
+>>>>>>> upstream/master
 end;
 
 {$ifndef FPCONLY}
@@ -564,6 +654,19 @@ end;
 procedure TFPCupManager.SetMakeDirectory(AValue: string);
 begin
   FMakeDirectory:=SafeExpandFileName(AValue);
+<<<<<<< HEAD
+=======
+end;
+
+function TFPCupManager.GetUseWget:boolean;
+begin
+  {$ifdef OpenBSD}
+  // only curl / wget works on OpenBSD (yet)
+  result:=True;
+  {$else}
+  result:=FUseWget;
+  {$endif}
+>>>>>>> upstream/master
 end;
 
 procedure TFPCupManager.WritelnLog(msg: string; ToConsole: boolean);
@@ -572,6 +675,16 @@ begin
   FLog.WriteLog(msg,ToConsole);
 end;
 
+<<<<<<< HEAD
+=======
+procedure TFPCupManager.WritelnLog(EventType: TEventType; msg: string; ToConsole: boolean);
+begin
+  // Set up log if it doesn't exist yet
+  FLog.WriteLog(EventType,msg,ToConsole);
+end;
+
+
+>>>>>>> upstream/master
 function TFPCupManager.LoadFPCUPConfig: boolean;
 begin
   installerUniversal.SetConfigFile(FConfigFile);
@@ -597,8 +710,10 @@ var
 begin
   result:=false;
 
+  FResultSet:=[];
+
   try
-    WritelnLog(DateTimeToStr(now)+': fpcup '+RevisionStr+' ('+VersionDate+') started.',true);
+    WritelnLog(DateTimeToStr(now)+': fpcup'+RevisionStr+' ('+VersionDate+') started.',true);
   except
     // Writing to log failed, probably duplicate run. Inform user and get out.
     {$IFNDEF NOCONSOLE}
@@ -626,24 +741,38 @@ begin
       infoln('Could not retrieve Windows version using GetWin32Version.',etWarning);
   {$ENDIF}
 
+<<<<<<< HEAD
   if SkipModules<>'' then begin
+=======
+  FSequencer.FSkipList:=nil;
+  if SkipModules<>'' then
+  begin
+>>>>>>> upstream/master
     FSequencer.FSkipList:=TStringList.Create;
     FSequencer.FSkipList.Delimiter:=',';
     FSequencer.FSkipList.DelimitedText:=SkipModules;
     end;
-  if FOnlyModules<>'' then begin
+
+  if FOnlyModules<>'' then
+  begin
     FSequencer.CreateOnly(FOnlyModules);
     result:=FSequencer.Run('Only');
     FSequencer.DeleteOnly;
     end
+<<<<<<< HEAD
   else begin
+=======
+  else
+  begin
+>>>>>>> upstream/master
     {$if defined(win32)}
     // Run Windows specific cross compiler or regular version
     if pos('CROSSWIN32-64',UpperCase(SkipModules))>0 then begin
       infoln('InstallerManager: going to run sequencer for sequence: Default.',etDebug);
       result:=FSequencer.Run('Default');
     end
-    else begin
+    else
+    begin
       infoln('InstallerManager: going to run sequencer for sequence: DefaultWin32.',etDebug);
       result:=FSequencer.Run('DefaultWin32');
     end;
@@ -685,8 +814,15 @@ begin
       FSequencer.DeleteOnly;
     end;
     end;
+<<<<<<< HEAD
   if assigned(FSequencer.FSkipList) then
     FSequencer.FSkipList.Free;
+=======
+
+  //FResultSet:=FSequencer.FInstaller;
+
+  if assigned(FSequencer.FSkipList) then FSequencer.FSkipList.Free;
+>>>>>>> upstream/master
 end;
 
 constructor TFPCupManager.Create;
@@ -785,6 +921,7 @@ function TSequencer.DoExec(FunctionName: string): boolean;
       {$ENDIF MSWINDOWS}
       {$IFDEF UNIX}
       {$IFDEF DARWIN}
+<<<<<<< HEAD
       CreateHomeStartLink(InstalledLazarus+'.app/Contents/MacOS/lazarus','--pcp="'+FParent.LazarusPrimaryConfigPath+'"',FParent.ShortcutNameLazarus);
       // Create shortcut on Desktop and in Applications
       fpSystem('/usr/bin/osascript << EOF'+#10+
@@ -793,6 +930,16 @@ function TSequencer.DoExec(FunctionName: string): boolean;
 	       'set name of result to "lazarus_fpcup"'+#10+
                'make new alias to POSIX file "/Users/superdad/development/lazarus/lazarus.app" at (path to applications folder as text)'+#10+
 	       'set name of result to "lazarus_fpcup"'+#10+
+=======
+      CreateHomeStartLink(IncludeLeadingPathDelimiter(InstalledLazarus)+'.app/Contents/MacOS/lazarus','--pcp="'+FParent.LazarusPrimaryConfigPath+'"',FParent.ShortcutNameLazarus);
+      // Create shortcut on Desktop and in Applications
+      fpSystem('/usr/bin/osascript << EOF'+#10+
+               'tell application "Finder"'+#10+
+               'make new alias to POSIX file "'+IncludeLeadingPathDelimiter(InstalledLazarus)+'.app" at (path to desktop folder as text)'+#10+
+	       'set name of result to "'+FParent.ShortCutNameLazarus+'"'+#10+
+               'make new alias to POSIX file "'+IncludeLeadingPathDelimiter(InstalledLazarus)+'.app" at (path to applications folder as text)'+#10+
+	       'set name of result to "'+FParent.ShortCutNameLazarus+'"'+#10+
+>>>>>>> upstream/master
                'end tell'+#10+
                'EOF');
       {$ELSE}
@@ -837,6 +984,11 @@ function TSequencer.DoExec(FunctionName: string): boolean;
     LIBSCNT=4;
   type
     TLibList=array[1..LIBSCNT] of string;
+    LibSource = record
+      lib:string;
+      source:string;
+    end;
+
   const
     LCLLIBS:TLibList = ('libX11.so','libgdk_pixbuf-2.0.so','libpango-1.0.so','libgdk-x11-2.0.so');
     //libx11-dev libgdk-pixbuf2.0-dev libcairo2-dev libpangox-1.0-dev xorg-dev libgtk2.0-dev libpango1.0-dev
@@ -844,6 +996,10 @@ function TSequencer.DoExec(FunctionName: string): boolean;
   var
     i:integer;
     pll:^TLibList;
+    Output: string;
+    AdvicedLibs:string;
+    AllOutput:TStringList;
+    LS:array of LibSource;
 
     function TestLib(LibName:string):boolean;
     var
@@ -861,18 +1017,118 @@ function TSequencer.DoExec(FunctionName: string): boolean;
 
   begin
     result:=true;
+
+    // these libs are always needed !!
+    AdvicedLibs:='make gdb binutils unzip patch ';
+
+    AllOutput:=TStringList.Create;
+    try
+      Output:='';
+      ExecuteCommand('cat /etc/os-release',Output,false);
+      AllOutput.Text := Output;
+      Output := lowercase(AllOutput.Values['ID_LIKE']);
+      if Length(Output)=0 then Output := lowercase(AllOutput.Values['DISTRIB_ID']);
+      if Length(Output)=0 then Output := lowercase(AllOutput.Values['ID']);
+
+      {$ifdef BSD}
+      {$ifndef Darwin}
+      if Length(Output)=0 then
+      begin
+        ExecuteCommand('uname -s',Output,false);
+        Output := lowercase(Output);
+      end;
+      {$endif}
+      {$endif}
+
+      if (Output='arch') OR (Output='manjaro') then
+      begin
+        Output:='libx11 gtk2 gdk-pixbuf2 pango cairo';
+        AdvicedLibs:=AdvicedLibs+'libx11 gtk2 gdk-pixbuf2 pango cairo ibus-gtk and ibus-gtk3 xorg-fonts-100dpi xorg-fonts-75dpi ttf-freefont ttf-liberation unrar';
+      end
+      else if (Output='debian') OR (Output='ubuntu') OR (Output='linuxmint') then
+      begin
+        {
+        SetLength(LS,12);
+        LS[0].lib:='libX11.so';
+        LS[0].source:='libx11-dev' ;
+
+        LS[1].lib:='libgdk_pixbuf-2.0.so';
+        LS[1].source:='libgdk-pixbuf2.0-dev' ;
+
+        LS[2].lib:='libgtk-x11-2.0.so';
+        LS[2].source:='libgtk2.0-0';
+        LS[3].lib:='libgdk-x11-2.0.so';
+        LS[3].source:='libgtk2.0-0';
+
+        LS[4].lib:='libgobject-2.0.so';
+        LS[4].source:='libglib2.0-0';
+
+        LS[5].lib:='libglib-2.0.so';
+        LS[5].source:='libglib2.0-0';
+
+        LS[6].lib:='libgthread-2.0.so';
+
+        LS[7].lib:='libgmodule-2.0.so';
+
+        LS[8].lib:='libpango-1.0.so';
+        LS[8].source:='libpango1.0-dev';
+
+        LS[9].lib:='libcairo.so';
+        LS[8].source:='libcairo2-dev';
+
+        LS[10].lib:='libatk-1.0.so';
+        LS[10].source:='libatk1.0-dev';
+
+        LS[11].lib:='libpangocairo-1.0.so';
+        }
+        //apt-get install subversion make binutils gdb gcc libgtk2.0-dev
+
+        Output:='libX11-dev libgtk2.0-dev libcairo2-dev libpango1.0-dev libxtst-dev libgdk-pixbuf2.0-dev libatk1.0-dev libghc-x11-dev';
+        AdvicedLibs:=AdvicedLibs+
+                     'make binutils build-essential gdb gcc subversion unzip unrar devscripts libc6-dev freeglut3-dev libgl1-mesa libgl1-mesa-dev '+
+                     'libglu1-mesa libglu1-mesa-dev libgpmg1-dev libsdl-dev libXxf86vm-dev libxtst-dev '+
+                     'libxft2 libfontconfig1 xfonts-scalable gtk2-engines-pixbuf unrar';
+      end
+      else
+      if (Output='rhel') OR (Output='centos') OR (Output='scientific') OR (Output='fedora')  then
+      begin
+        Output:='libX11-devel gtk2-devel gtk+extra gtk+-devel cairo-devel cairo-gobject-devel pango-devel';
+      end
+      else
+      if (Output='openbsd') OR (Output='freebsd') OR (Output='netbsd')  then
+      begin
+        //Output:='subversion openssl curl';
+      end
+      else Output:='the libraries to get libX11.so and libgdk_pixbuf-2.0.so and libpango-1.0.so and libgdk-x11-2.0.so, but also make and binutils';
+
+    finally
+      AllOutput.Free;
+    end;
+
     if (LCLPlatform='') or (Uppercase(LCLPlatform)='GTK2') then
       pll:=@LCLLIBS
     else if Uppercase(LCLPlatform)='QT' then
       pll:=@QTLIBS;
     for i:=1 to LIBSCNT do
-      begin
+    begin
       if not TestLib(pll^[i]) then
-        begin
-        FParent.WritelnLog('Required -dev packages are not installed for Lazarus: '+pll^[i], true);
+      begin
+        FParent.WritelnLog(etError,'Required package is not installed for Lazarus: '+pll^[i], true);
         result:=false;
-        end;
       end;
+<<<<<<< HEAD
+=======
+    end;
+    if (NOT result) AND (Length(Output)>0) then
+    begin
+      FParent.WritelnLog(etError,'You need to install at least '+Output+' to build Lazarus !!', true);
+      FParent.WritelnLog(etError,'Make, binutils, subversion/svn [and gdb] are also required !!', true);
+    end;
+
+    // do not error out ... user could only install FPC
+    result:=true;
+
+>>>>>>> upstream/master
   end;
   {$else} //stub for other platforms for now
   function CheckDevLibs(LCLPlatform: string): boolean;
@@ -930,6 +1186,7 @@ begin
   result:=true;
 end;
 {$endif}
+<<<<<<< HEAD
 
 function TSequencer.DoUnInstallModule(ModuleName: string): boolean;
 begin
@@ -939,6 +1196,17 @@ end;
 
 {GetInstaller gets a new installer for ModuleName and initialises parameters unless one exist already.}
 
+=======
+
+function TSequencer.DoUnInstallModule(ModuleName: string): boolean;
+begin
+  infoln('TSequencer: DoUninstallModule for module '+ModuleName+' called.',etDebug);
+  result:= GetInstaller(ModuleName) and FInstaller.UnInstallModule(ModuleName);
+end;
+
+{GetInstaller gets a new installer for ModuleName and initialises parameters unless one exist already.}
+
+>>>>>>> upstream/master
 function TSequencer.GetInstaller(ModuleName: string): boolean;
 var
   CrossCompiling:boolean;
@@ -949,7 +1217,11 @@ begin
   //check if this is a known module:
 
   // FPC:
+<<<<<<< HEAD
   if uppercase(ModuleName)='FPC' then
+=======
+  if (uppercase(ModuleName)='FPC') then
+>>>>>>> upstream/master
     begin
     if assigned(FInstaller) then
       begin
@@ -978,13 +1250,15 @@ begin
     end
     else
       FInstaller:=TFPCNativeInstaller.Create;
-    FInstaller.BaseDirectory:=FParent.FPCDirectory;
+    FInstaller.SourceDirectory:=FParent.FPCSourceDirectory;
+    FInstaller.InstallDirectory:=FParent.FPCInstallDirectory;
     (FInstaller as TFPCInstaller).BootstrapCompilerDirectory:=FParent.BootstrapCompilerDirectory;
     (FInstaller as TFPCInstaller).BootstrapCompilerURL:=FParent.BootstrapCompilerURL;
     (FInstaller as TFPCInstaller).SourcePatches:=FParent.FFPCPatches;
     FInstaller.Compiler:='';  //bootstrap used
     FInstaller.CompilerOptions:=FParent.FPCOPT;
     FInstaller.DesiredRevision:=FParent.FPCDesiredRevision;
+    FInstaller.DesiredBranch:=FParent.FPCDesiredBranch;
     FInstaller.URL:=FParent.FPCURL;
     end
 
@@ -1013,17 +1287,25 @@ begin
       end
     else
       FInstaller:=TLazarusNativeInstaller.Create;
-    FInstaller.BaseDirectory:=FParent.LazarusDirectory ;
+    // source- and install-dir are the same for Lazarus ... could be changed
+    FInstaller.SourceDirectory:=FParent.LazarusDirectory ;
+    FInstaller.InstallDirectory:=FParent.LazarusDirectory ;
     if FParent.CompilerName='' then
-      FInstaller.Compiler:=FInstaller.GetCompilerInDir(FParent.FPCDirectory)
+      FInstaller.Compiler:=FInstaller.GetCompilerInDir(FParent.FPCInstallDirectory)
     else
       FInstaller.Compiler:=FParent.CompilerName;
     FInstaller.CompilerOptions:=FParent.LazarusOPT;
     FInstaller.DesiredRevision:=FParent.LazarusDesiredRevision;
+    FInstaller.DesiredBranch:=FParent.LazarusDesiredBranch;
     // CrossLCL_Platform is only used when building LCL, but the Lazarus module
     // will take care of that.
     (FInstaller as TLazarusInstaller).CrossLCL_Platform:=FParent.CrossLCL_Platform;
+<<<<<<< HEAD
     (FInstaller as TLazarusInstaller).FPCDir:=FParent.FPCDirectory;
+=======
+    (FInstaller as TLazarusInstaller).FPCSourceDir:=FParent.FPCSourceDirectory;
+    (FInstaller as TLazarusInstaller).FPCInstallDir:=FParent.FPCInstallDirectory;
+>>>>>>> upstream/master
     (FInstaller as TLazarusInstaller).PrimaryConfigPath:=FParent.LazarusPrimaryConfigPath;
     (FInstaller as TLazarusInstaller).SourcePatches:=FParent.FLazarusPatches;
     FInstaller.URL:=FParent.LazarusURL;
@@ -1044,9 +1326,9 @@ begin
           FInstaller.free; // get rid of old FInstaller
         end;
       FInstaller:=THelpFPCInstaller.Create;
-      FInstaller.BaseDirectory:=FParent.FPCDirectory;
+      FInstaller.SourceDirectory:=FParent.FPCSourceDirectory;
       if FParent.CompilerName='' then
-        FInstaller.Compiler:=FInstaller.GetCompilerInDir(FParent.FPCDirectory)
+        FInstaller.Compiler:=FInstaller.GetCompilerInDir(FParent.FPCInstallDirectory)
       else
         FInstaller.Compiler:=FParent.CompilerName;
       end
@@ -1063,12 +1345,14 @@ begin
           FInstaller.free; // get rid of old FInstaller
         end;
       FInstaller:=THelpLazarusInstaller.Create;
-      FInstaller.BaseDirectory:=FParent.LazarusDirectory ;
+      FInstaller.SourceDirectory:=FParent.LazarusDirectory;
+      // the same ... may change in the future
+      FInstaller.InstallDirectory:=FParent.LazarusDirectory;
       if FParent.CompilerName='' then
-        FInstaller.Compiler:=FInstaller.GetCompilerInDir(FParent.FPCDirectory)
+        FInstaller.Compiler:=FInstaller.GetCompilerInDir(FParent.FPCInstallDirectory)
       else
         FInstaller.Compiler:=FParent.CompilerName;
-      (FInstaller as THelpLazarusInstaller).FPCDirectory:=FParent.FPCDirectory;
+      (FInstaller as THelpLazarusInstaller).FPCDirectory:=FParent.FPCInstallDirectory;
       (FInstaller as THelpLazarusInstaller).LazarusPrimaryConfigPath:=FParent.LazarusPrimaryConfigPath;
       end
   {$endif}
@@ -1087,7 +1371,11 @@ begin
       FInstaller:=TUniversalInstaller.Create;
       FCurrentModule:=ModuleName;
       //assign properties
+<<<<<<< HEAD
       (FInstaller as TUniversalInstaller).FPCDir:=FParent.FPCDirectory;
+=======
+      (FInstaller as TUniversalInstaller).FPCDir:=FParent.FPCInstallDirectory;
+>>>>>>> upstream/master
       // Use compileroptions for chosen FPC compile options...
       FInstaller.CompilerOptions:=FParent.FPCOPT;
       // ... but more importantly, pass Lazarus compiler options needed for IDE rebuild
@@ -1097,7 +1385,7 @@ begin
       (FInstaller as TUniversalInstaller).LazarusPrimaryConfigPath:=FParent.LazarusPrimaryConfigPath;
       {$endif}
       if FParent.CompilerName='' then
-        FInstaller.Compiler:=FInstaller.GetCompilerInDir(FParent.FPCDirectory)
+        FInstaller.Compiler:=FInstaller.GetCompilerInDir(FParent.FPCInstallDirectory)
       else
         FInstaller.Compiler:=FParent.CompilerName;
     end;
@@ -1112,6 +1400,10 @@ begin
   FInstaller.ReApplyLocalChanges:=FParent.ReApplyLocalChanges;
   FInstaller.PatchCmd:=FParent.PatchCmd;
   FInstaller.Verbose:=FParent.Verbose;
+<<<<<<< HEAD
+=======
+  FInstaller.UseWget:=FParent.UseWget;
+>>>>>>> upstream/master
   FInstaller.ExportOnly:=FParent.ExportOnly;
   FInstaller.NoJobs:=FParent.NoJobs;
   FInstaller.Log:=FParent.FLog;
@@ -1137,18 +1429,34 @@ end;
 
 function TSequencer.IsSkipped(ModuleName: string): boolean;
 begin
+<<<<<<< HEAD
   result:=assigned(FSkipList) and (FSkipList.IndexOf(Uppercase(ModuleName))>=0);
+=======
+  try
+  result:=assigned(FSkipList) and (FSkipList.IndexOf(Uppercase(ModuleName))>=0);
+  except
+    result:=false;
+  end;
+>>>>>>> upstream/master
 end;
 
 procedure TSequencer.ResetAllExecuted(SkipFPC: boolean);
 var
   idx:integer;
 begin
+<<<<<<< HEAD
 for idx:=0 to FParent.FModuleList.Count -1 do
   // convention: FPC sequences that are to be skipped start with 'FPC'. Used in SetLCL.
   // todo: skip also help???? Who would call several help installs in one sequence? SubSequences?
   if not SkipFPC or (pos('FPC',Uppercase(FParent.FModuleList[idx]))<>1) then
     PSequenceAttributes(FParent.FModuleList.Objects[idx])^.Executed:=ESNever;
+=======
+  for idx:=0 to FParent.FModuleList.Count -1 do
+    // convention: FPC sequences that are to be skipped start with 'FPC'. Used in SetLCL.
+    // todo: skip also help???? Who would call several help installs in one sequence? SubSequences?
+    if not SkipFPC or (pos('FPC',Uppercase(FParent.FModuleList[idx]))<>1) then
+      PSequenceAttributes(FParent.FModuleList.Objects[idx])^.Executed:=ESNever;
+>>>>>>> upstream/master
 end;
 
 function TSequencer.AddSequence(Sequence: string): boolean;
@@ -1160,7 +1468,6 @@ var
   sequencename:string='';
 
   function KeyStringToKeyword(Key:string):TKeyword;
-
   begin
     if key='DECLARE' then result:=SMdeclare
     else if key='DECLAREHIDDEN' then result:=SMdeclareHidden

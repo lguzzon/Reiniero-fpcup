@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 { Utility unit for FPCUp
+=======
+{ Utility unit for various FPCup versions
+>>>>>>> upstream/master
 Copyright (C) 2012-2014 Reinier Olislagers, Ludo Brands
 
 This library is free software; you can redistribute it and/or modify it
@@ -38,17 +42,82 @@ this will disable writeln calls
 }
 {not $DEFINE NOCONSOLE}
 
+{$define ENABLEWGET}
+
 interface
+<<<<<<< HEAD
 
 uses
   Classes, SysUtils,
   //blcksock,typinfo {for status info},
   eventlog;
+=======
+
+uses
+  Classes, SysUtils,
+  zipper,
+  fphttpclient,
+  sslsockets, fpopenssl,
+  //fpftpclient,
+  eventlog;
+
+Const
+  // Maximum retries when downloading a file
+  DefMaxRetries = 5;
+>>>>>>> upstream/master
 
 type
   //callback = class
   //  class procedure Status (Sender: TObject; Reason: THookSocketReason; const Value: String);
   //end;
+<<<<<<< HEAD
+=======
+
+  {TThreadedUnzipper}
+
+  TOnZipProgress = procedure(Sender: TObject; FPercent: double) of object;
+  TOnZipFile = procedure(Sender: TObject; AFileName : string; FileCount,TotalFileCount:cardinal) of object;
+  TOnZipCompleted = TNotifyEvent;
+
+  TThreadedUnzipper = class(TThread)
+  private
+    FStarted: Boolean;
+    FErrMsg: String;
+    FUnZipper: TUnZipper;
+    FPercent: double;
+    FFileCount: cardinal;
+    FFileList:TStrings;
+    FTotalFileCount: cardinal;
+    FCurrentFile: string;
+    FOnZipProgress: TOnZipProgress;
+    FOnZipFile: TOnZipFile;
+    FOnZipCompleted: TOnZipCompleted;
+    procedure DoOnProgress(Sender : TObject; Const Pct : Double);
+    procedure DoOnFile(Sender : TObject; Const AFileName : string);
+    procedure DoOnZipProgress;
+    procedure DoOnZipFile;
+    procedure DoOnZipCompleted;
+  protected
+    procedure Execute; override;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    procedure DoUnZip(const ASrcFile, ADstDir: String; Files:array of string);
+  published
+    property OnZipProgress: TOnZipProgress read FOnZipProgress write FOnZipProgress;
+    property OnZipFile: TOnZipFile read FOnZipFile write FOnZipFile;
+    property OnZipCompleted: TOnZipCompleted read FOnZipCompleted write FOnZipCompleted;
+  end;
+
+  TNormalUnzipper = class(TObject)
+  private
+    FUnZipper: TThreadedUnzipper;
+    procedure DoOnZipFile(Sender: TObject; aFile: string; FileCnt, TotalFileCnt:cardinal);
+  public
+    function DoUnZip(const ASrcFile, ADstDir: String; Files:array of string):boolean;
+  end;
+
+>>>>>>> upstream/master
 
   { TLogger }
   TLogger = class(TObject)
@@ -66,6 +135,93 @@ type
     destructor Destroy; override;
   end;
 
+<<<<<<< HEAD
+=======
+  TBasicDownLoader = Class(TComponent)
+  private
+    FVerbose:boolean;
+    FMaxRetries:byte;
+    FUsername: string;
+    FPassword: string;
+    FHTTPProxyHost: string;
+    FHTTPProxyPort: integer;
+    FHTTPProxyUser: string;
+    FHTTPProxyPassword: string;
+    procedure parseFTPHTMLListing(F:TStream;filelist:TStringList);
+  protected
+    procedure SetVerbose(aValue:boolean);virtual;
+    property MaxRetries : Byte Read FMaxRetries Write FMaxRetries default DefMaxRetries;
+    property Username: string read FUsername;
+    property Password: string read FPassword;
+    property HTTPProxyHost: string read FHTTPProxyHost;
+    property HTTPProxyPort: integer read FHTTPProxyPort;
+    property HTTPProxyUser: string read FHTTPProxyUser;
+    property HTTPProxyPassword: string read FHTTPProxyPassword;
+    property Verbose: boolean write SetVerbose;
+  public
+    constructor Create;virtual;
+    constructor Create(AOwner: TComponent);override;
+    destructor Destroy;override;
+    procedure setCredentials(user,pass:string);virtual;
+    procedure setProxy(host:string;port:integer;user,pass:string);virtual;
+    function getFile(const URL,filename:string):boolean;virtual;abstract;
+    function getFTPFileList(const URL:string; filelist:TStringList):boolean;virtual;abstract;
+    function checkURL(const URL:string):boolean;virtual;abstract;
+  end;
+
+
+  TUseNativeDownLoader = Class(TBasicDownLoader)
+  private
+    aFPHTTPClient:TFPHTTPClient;
+    procedure DoProgress(Sender: TObject; Const ContentLength, CurrentPos : Int64);
+    procedure DoHeaders(Sender : TObject);
+    procedure DoPassword(Sender: TObject; var RepeatRequest: Boolean);
+    procedure ShowRedirect(ASender : TObject; Const ASrc : String; Var ADest : String);
+    function Download(const URL: String; filename:string):boolean;
+  protected
+    procedure SetVerbose(aValue:boolean);override;
+    function FTPDownload(Const URL : String; filename:string):boolean;
+    function HTTPDownload(Const URL : String; filename:string):boolean;
+  public
+    constructor Create;override;
+    destructor Destroy; override;
+    procedure setProxy(host:string;port:integer;user,pass:string);override;
+    function getFile(const URL,filename:string):boolean;override;
+    function getFTPFileList(const URL:string; filelist:TStringList):boolean;override;
+    function checkURL(const URL:string):boolean;override;
+  end;
+
+  {$IFDEF ENABLEWGET}
+  TUseWGetDownloader = Class(TBasicDownLoader)
+  private
+    function WGetDownload(Const URL : String; Dest : TStream):boolean;
+    function LibCurlDownload(Const URL : String; Dest : TStream):boolean;
+    function WGetFTPFileList(const URL:string; filelist:TStringList):boolean;
+    function LibCurlFTPFileList(const URL:string; filelist:TStringList):boolean;
+    function Download(const URL: String; Dest: TStream):boolean;
+  protected
+    function FTPDownload(Const URL : String; Dest : TStream):boolean;
+    function HTTPDownload(Const URL : String; Dest : TStream):boolean;
+  public
+    function getFile(const URL,filename:string):boolean;override;
+    function getFTPFileList(const URL:string; filelist:TStringList):boolean;override;
+    function checkURL(const URL:string):boolean;override;
+  end;
+
+  {$ENDIF}
+
+  TNativeDownloader = TUseNativeDownLoader;
+  {$IFDEF Darwin}
+  TWGetDownloader = TUseNativeDownLoader;
+  {$else}
+  {$IFDEF ENABLEWGET}
+  TWGetDownloader = TUseWGetDownloader;
+  {$ELSE}
+  TWGetDownloader = TUseNativeDownLoader;
+  {$ENDIF}
+  {$endif}
+
+>>>>>>> upstream/master
 // Create shortcut on desktop to Target file
 procedure CreateDesktopShortCut(Target, TargetArguments, ShortcutName: string) ;
 // Create shell script in ~ directory that links to Target
@@ -81,15 +237,26 @@ function DeleteFilesSubDirs(const DirectoryName: string; const Names:TStringList
 // Recursively delete files with specified extension(s),
 // only if path contains specfied directory name somewhere (or no directory name specified):
 function DeleteFilesExtensionsSubdirs(const DirectoryName: string; const Extensions:TstringList; const OnlyIfPathHas: string): boolean;
+<<<<<<< HEAD
 function GetFileNameFromURL(URL:string):string;
 // Download from HTTP (includes Sourceforge redirection support) or FTP
 // HTTP download can work with http proxy
 function Download(URL, TargetFile: string; HTTPProxyHost: string=''; HTTPProxyPort: string=''; HTTPProxyUser: string=''; HTTPProxyPassword: string=''): boolean;
 // File size; returns 0 if empty, non-existent or error.
 //function FileSizeUTF8(FileName: string): int64;
+=======
+// only if filename contains specfied part somewhere
+function DeleteFilesNameSubdirs(const DirectoryName: string; const OnlyIfNameHas: string): boolean;
+function GetFileNameFromURL(URL:string):string;
+function GetVersionFromUrl(URL:string): string;
+// Download from HTTP (includes Sourceforge redirection support) or FTP
+// HTTP download can work with http proxy
+function Download(UseWget:boolean; URL, TargetFile: string; HTTPProxyHost: string=''; HTTPProxyPort: integer=0; HTTPProxyUser: string=''; HTTPProxyPassword: string=''): boolean;
+>>>>>>> upstream/master
 {$IFDEF MSWINDOWS}
 // Get Windows major and minor version number (e.g. 5.0=Windows 2000)
 function GetWin32Version(var Major,Minor,Build : Integer): Boolean;
+function IsWindows64: boolean;
 {$ENDIF}
 //check if there is at least one directory between Dir and root
 function ParentDirectoryIsNotRoot(Dir:string):boolean;
@@ -122,23 +289,54 @@ function Which(Executable: string): string;
 function ExtractFileNameOnly(const AFilename: string): string;
 function GetCompilerName(Cpu_Target:string):string;
 function GetCrossCompilerName(Cpu_Target:string):string;
+<<<<<<< HEAD
+=======
+function DoubleQuoteIfNeeded(FileName: string): string;
+function GetNumericalVersion(aVersion: string): word;
+function UppercaseFirstChar(s: String): String;
+>>>>>>> upstream/master
 
 implementation
 
 uses
-  httpsend {for downloading from http},
+  {$ifdef LCL}
+  Forms,Controls,
+  {$endif}
+  IniFiles,
+  DOM,DOM_HTML,SAX_HTML,
   ftpsend {for downloading from ftp},
   FileUtil, LazFileUtils, LazUTF8,
+<<<<<<< HEAD
   strutils
+=======
+  strutils,uriparser
+>>>>>>> upstream/master
   {$IFDEF MSWINDOWS}
     //Mostly for shortcut code
     ,windows, shlobj {for special folders}, ActiveX, ComObj
   {$ENDIF MSWINDOWS}
+  {$IFDEF ENABLEWGET}
+  // for wget downloader
+  ,process
   {$IFDEF UNIX}
-  ,baseunix,processutils
-  {$ENDIF UNIX}
+  ,baseunix
+  {$ENDIF}
+  ,processutils
+  // for libc downloader
+  ,fpcuplibcurl
+  {$ENDIF ENABLEWGET}
   ;
 
+<<<<<<< HEAD
+=======
+const
+  USERAGENT = 'curl/7.50.1 (i686-pc-linux-gnu) libcurl/7.50.1 OpenSSL/1.0.1t zlib/1.2.8 libidn/1.29 libssh2/1.4.3 librtmp/2.3';
+  //USERAGENT = 'Mozilla/5.0 (compatible; fpweb)';
+  //USERAGENT = 'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)';
+  CURLUSERAGENT='curl/7.51.0';
+
+
+>>>>>>> upstream/master
 {$ifdef mswindows}
 function GetWin32Version(var Major,Minor,Build : Integer): Boolean;
 var
@@ -159,6 +357,44 @@ end
 else
   result:=false;
 end;
+
+function IsWindows64: boolean;
+  {
+  Detect if we are running on 64 bit Windows or 32 bit Windows,
+  independently of bitness of this program.
+  Original source:
+  http://www.delphipraxis.net/118485-ermitteln-ob-32-bit-oder-64-bit-betriebssystem.html
+  modified for FreePascal in German Lazarus forum:
+  http://www.lazarusforum.de/viewtopic.php?f=55&t=5287
+  }
+{$ifdef WIN32} //Modified KpjComp for 64bit compile mode
+type
+  TIsWow64Process = function( // Type of IsWow64Process API fn
+      Handle: Windows.THandle; var Res: Windows.BOOL): Windows.BOOL; stdcall;
+var
+  IsWow64Result: Windows.BOOL; // Result from IsWow64Process
+  IsWow64Process: TIsWow64Process; // IsWow64Process fn reference
+begin
+  // Try to load required function from kernel32
+  IsWow64Process := TIsWow64Process(Windows.GetProcAddress(
+    Windows.GetModuleHandle('kernel32'), 'IsWow64Process'));
+  if Assigned(IsWow64Process) then
+  begin
+    // Function is implemented: call it
+    if not IsWow64Process(Windows.GetCurrentProcess, IsWow64Result) then
+      raise SysUtils.Exception.Create('IsWindows64: bad process handle');
+    // Return result of function
+    Result := IsWow64Result;
+  end
+  else
+    // Function not implemented: can't be running on Wow64
+    Result := False;
+{$else} //if were running 64bit code, OS must be 64bit :)
+begin
+  Result := True;
+{$endif}
+end;
+
 {$endif}
 
 function SafeExpandFileName (Const FileName : String): String;
@@ -180,6 +416,7 @@ end;
 function SafeGetApplicationPath: String;
 var
   StartPath: String;
+<<<<<<< HEAD
 begin
  StartPath:=ExpandFileNameUTF8(ParamStrUTF8(0));
  if FileIsSymlink(StartPath) then
@@ -187,12 +424,37 @@ begin
  result:=ExtractFilePath(StartPath);
     if DirectoryExistsUTF8(result) then
        result:=GetPhysicalFilename(result,pfeException);
+=======
+  {$ifdef Darwin}
+  x:integer;
+  {$endif}
+begin
+ StartPath:=IncludeTrailingPathDelimiter(ProgramDirectory);
+ {$ifdef Darwin}
+ x:=pos('/Contents/MacOS',StartPath);
+ if x>0 then
+ begin
+   Delete(StartPath,x,MaxInt);
+   x:=RPos('/',StartPath);
+   if x>0 then
+   begin
+     Delete(StartPath,x+1,MaxInt);
+   end;
+ end;
+  {$endif}
+ if FileIsSymlink(StartPath) then
+    StartPath:=GetPhysicalFilename(StartPath,pfeException);
+ result:=ExtractFilePath(StartPath);
+ if DirectoryExistsUTF8(result) then
+    result:=GetPhysicalFilename(result,pfeException);
+>>>>>>> upstream/master
  result:=AppendPathDelim(result);
 end;
 
 procedure SaveInisFromResource(filename,resourcename:string);
 var
   fs:Tfilestream;
+<<<<<<< HEAD
 begin
   // See InstallerUniversal : the use of fpcup.rc and fpcup.res !!!!
   // the two resouce files are now added via lazarus
@@ -207,6 +469,86 @@ begin
     end;
   finally
     Free;
+=======
+  ms:TMemoryStream;
+  BackupFileName:string;
+  Ini:TMemIniFile;
+  OldIniVersion,NewIniVersion:string;
+begin
+
+  if NOT FileExists(filename) then
+  begin
+    // create inifile
+    with TResourceStream.Create(hInstance, resourcename, RT_RCDATA) do
+    try
+      try
+        fs:=Tfilestream.Create(filename,fmCreate);
+        Savetostream(fs);
+      finally
+        fs.Free;
+      end;
+    finally
+      Free;
+    end;
+  end
+  else
+  begin
+
+    // create memory stream of resource
+    ms:=TMemoryStream.Create;
+    try
+      with TResourceStream.Create(hInstance, resourcename, RT_RCDATA) do
+      try
+        Savetostream(ms);
+      finally
+        Free;
+     end;
+     ms.Position:=0;
+
+     Ini:=TMemIniFile.Create(ms);
+     {$IF DEFINED(FPC_FULLVERSION) AND (FPC_FULLVERSION > 30000)}
+     Ini.Options:=[ifoStripQuotes];
+     {$ELSE}
+     ini.StripQuotes:=true;
+     {$ENDIF}
+     NewIniVersion:=Ini.ReadString('fpcupinfo','inifileversion','0.0.0.0');
+     Ini.Free;
+
+     Ini:=TMemIniFile.Create(filename);
+     {$IF DEFINED(FPC_FULLVERSION) AND (FPC_FULLVERSION > 30000)}
+     Ini.Options:=[ifoStripQuotes];
+     {$ELSE}
+     ini.StripQuotes:=true;
+     {$ENDIF}
+     OldIniVersion:=Ini.ReadString('fpcupinfo','inifileversion','0.0.0.0');
+     Ini.Free;
+
+     if OldIniVersion<>NewIniVersion then
+     begin
+       BackupFileName:=ChangeFileExt(filename,'.bak');
+       while FileExists(BackupFileName) do BackupFileName := BackupFileName + 'k';
+       try
+         FileUtil.CopyFile(filename,BackupFileName);
+         if SysUtils.DeleteFile(filename) then
+         begin
+           ms.Position:=0;
+           fs := TFileStream.Create(filename,fmCreate);
+           try
+             fs.CopyFrom(ms, ms.Size);
+           finally
+             FreeAndNil(fs);
+           end;
+         end;
+       except
+         infoln('Could not make a backup copy of old inifile',etError);
+       end;
+     end;
+
+    finally
+      ms.Free;
+    end;
+
+>>>>>>> upstream/master
   end;
 
 end;
@@ -243,7 +585,10 @@ begin
 end;
 {$ENDIF MSWINDOWS}
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> upstream/master
 {$IFDEF UNIX}
 procedure CreateDesktopShortCut(Target, TargetArguments, ShortcutName: string);
 var
@@ -258,6 +603,7 @@ begin
   XdgDesktopContent:=TStringList.Create;
   try
     XdgDesktopContent.Add('[Desktop Entry]');
+    XdgDesktopContent.Add('Version=1.0');
     XdgDesktopContent.Add('Encoding=UTF-8');
     XdgDesktopContent.Add('Type=Application');
     XdgDesktopContent.Add('Icon='+ExtractFilePath(Target)+'images/icons/lazarus.ico');
@@ -265,6 +611,9 @@ begin
     XdgDesktopContent.Add('Name='+ShortcutName);
     XdgDesktopContent.Add('Category=Application;IDE;Development;GUIDesigner;');
     XdgDesktopContent.Add('Keywords=editor;Pascal;IDE;FreePascal;fpc;Design;Designer;');
+    //XdgDesktopContent.Add('StartupWMClass=Lazarus');
+    //XdgDesktopContent.Add('MimeType=text/x-pascal;');
+    //XdgDesktopContent.Add('Patterns=*.pas;*.pp;*.p;*.inc;*.lpi;*.lpk;*.lpr;*.lfm;*.lrs;*.lpl;');
     // We're going to try and call xdg-desktop-icon
     // this may fail if shortcut exists already
     try
@@ -275,10 +624,14 @@ begin
     end;
 
     if OperationSucceeded=false then
-      infoln('CreateDesktopShortcut: failed to create shortcut to '+Target,etWarning);
+    begin
+      infoln('CreateDesktopShortcut: xdg-desktop-icon failed to create shortcut to '+Target,etWarning);
+      //infoln('CreateDesktopShortcut: going to create shortcut manually',etWarning);
+      //FileUtil.CopyFile(XdgDesktopFile,'/usr/share/applications/'+ExtractFileName(XdgDesktopFile));
+    end;
     // Temp file is no longer needed....
     try
-      DeleteFile(XdgDesktopFile);
+      SysUtils.DeleteFile(XdgDesktopFile);
     finally
       // Swallow, let filesystem maintenance clear it up
     end;
@@ -321,6 +674,7 @@ begin
   {$ENDIF UNIX}
 end;
 
+<<<<<<< HEAD
 function DownloadFTP(URL, TargetFile: string): boolean;
 const
   FTPPort=21; //default ftp server port
@@ -364,12 +718,28 @@ http://downloads.sourceforge.net/project/base64decoder/base64decoder/version%202
 const
   Refresh='<meta http-equiv="refresh"';
   URLMarker='url=';
+=======
+function GetFileNameFromURL(URL:string):string;
 var
-  Counter: integer;
-  HTMLBody: TStringList;
-  RefreshStart: integer;
-  URLStart: integer;
+  URI:TURI;
+  aURL:string;
 begin
+  if AnsiEndsStr('/download',URL)
+     then aURL:=Copy(URL,1,Length(URL)-9)
+     else aURL:=URL;
+  URI:=ParseURI(aURL);
+  result:=URI.Document;
+end;
+
+function GetVersionFromUrl(URL:string): string;
+>>>>>>> upstream/master
+var
+  VersionSnippet:string;
+  i:integer;
+  VersionList : TStringList;
+  MajorVersion,MinorVersion,ReleaseVersion : string;
+begin
+<<<<<<< HEAD
   HTMLBody:=TStringList.Create;
   try
     HTMLBody.LoadFromStream(Document);
@@ -424,36 +794,30 @@ begin
   FoundCorrectURL:=true; //Assume not a SF download
   i:=Pos(SFProjectPart, URL);
   if i>0 then
+=======
+  if Pos('trunk',URL)>0 then result:='trunk' else
+>>>>>>> upstream/master
   begin
-    // Possibly found project; now extract project, directory and filename parts.
-    SFProjectBegin:=i+Length(SFProjectPart);
-    j := PosEx(SFFilesPart, URL, SFProjectBegin);
-    if (j>0) then
+    MajorVersion := '0';
+    MinorVersion := '0';
+    ReleaseVersion := '0';
+
+    VersionSnippet:=UpperCase(URL);
+
+    // find first occurence of _ and delete everything before it
+    // if url contains a version, this version always starts with first _
+
+    i := Pos('_',VersionSnippet);
+    if i>0 then
     begin
-      SFProject:=Copy(URL, SFProjectBegin, j-SFProjectBegin);
-      SFDirectoryBegin:=PosEx(SFFilesPart, URL, SFProjectBegin)+Length(SFFilesPart);
-      if SFDirectoryBegin>0 then
-      begin
-        // Find file
-        // URL might have trailing arguments... so: search for first
-        // /download coming up from the right, but it should be after
-        // /files/
-        i:=RPos(SFDownloadPart, URL);
-        // Now look for previous / so we can make out the file
-        // This might perhaps be the trailing / in /files/
-        SFFileBegin:=RPosEx('/',URL,i-1)+1;
-
-        if SFFileBegin>0 then
-        begin
-          SFFilename:=Copy(URL,SFFileBegin, i-SFFileBegin);
-          //Include trailing /
-          SFDirectory:=Copy(URL, SFDirectoryBegin, SFFileBegin-SFDirectoryBegin);
-          FoundCorrectURL:=false;
-        end;
-      end;
+      Delete(VersionSnippet,1,i);
+      // ignore release candidate numbering
+      i := Pos('_RC',VersionSnippet);
+      if i>0 then Delete(VersionSnippet,i,200);
+      VersionSnippet:=StringReplace(VersionSnippet,'_',',',[rfReplaceAll]);
     end;
-  end;
 
+<<<<<<< HEAD
   if not FoundCorrectURL then
   begin
 
@@ -635,12 +999,26 @@ begin
     except
       // We don't care for the reason for this error; the download failed.
       result:=false;
+=======
+    if Length(VersionSnippet)>0 then
+    begin
+      VersionList := TStringList.Create;
+      try
+        VersionList.CommaText := VersionSnippet;
+        if VersionList.Count>0 then MajorVersion := VersionList[0];
+        if VersionList.Count>1 then MinorVersion := VersionList[1];
+        if VersionList.Count>2 then ReleaseVersion := VersionList[2];
+      finally
+        VersionList.Free;
+      end;
+>>>>>>> upstream/master
     end;
-  finally
-    HTTPSender.Free;
+    result:=MajorVersion+'.'+MinorVersion+'.'+ReleaseVersion;
+
   end;
 end;
 
+<<<<<<< HEAD
 function GetFileNameFromURL(URL:string):string;
 var
   i:integer;
@@ -654,6 +1032,8 @@ begin
   result:=RightStr(result,Length(result)-i+1);
 end;
 
+=======
+>>>>>>> upstream/master
 
 {$IFDEF MSWINDOWS}
 procedure DeleteDesktopShortcut(ShortcutName: string);
@@ -853,6 +1233,7 @@ begin
   Result:=true;
 end;
 
+<<<<<<< HEAD
 function Download(URL, TargetFile: string; HTTPProxyHost: string=''; HTTPProxyPort: string=''; HTTPProxyUser: string=''; HTTPProxyPassword: string=''): boolean;
 begin
   result:=false;
@@ -877,22 +1258,111 @@ begin
     end;
     //Not writing message here; to be handled by calling code with more context.
     //if result:=false then infoln('Download: download of '+TargetFile+' from URL: '+URL+' failed.');
+=======
+function DeleteFilesNameSubdirs(const DirectoryName: string; const OnlyIfNameHas: string): boolean;
+// Deletes all files containing OnlyIfNameHas
+// DirectoryName and recursing down.
+// Will try to remove read-only files.
+//todo: check how this works with case insensitive file system like Windows
+var
+  AllFiles: boolean;
+  CurSrcDir: String;
+  CurFilename: String;
+  FileInfo: TSearchRec;
+  i: integer;
+begin
+  Result:=false;
+  AllFiles:=(Length(OnlyIfNameHas)=0);
+
+  // for now, exit when no filename data is given ... use DeleteDirectoryEx
+  if AllFiles then exit;
+
+  CurSrcDir:=CleanAndExpandDirectory(DirectoryName);
+  if FindFirstUTF8(CurSrcDir+GetAllFilesMask,faAnyFile{$ifdef unix} or faSymLink {$endif unix},FileInfo)=0 then
+  begin
+    repeat
+      // Ignore directories and files without name:
+      if (FileInfo.Name<>'.') and (FileInfo.Name<>'..') and (FileInfo.Name<>'') then
+      begin
+        // Look at all files and directories in this directory:
+        CurFilename:=CurSrcDir+FileInfo.Name;
+        if ((FileInfo.Attr and faDirectory)>0) {$ifdef unix} and ((FileInfo.Attr and faSymLink)=0) {$endif unix} then
+        begin
+          // Directory; call recursively exit with failure on error
+          if not DeleteFilesNameSubdirs(CurFilename, OnlyIfNameHas) then
+          begin
+            FindCloseUTF8(FileInfo);
+            exit;
+          end;
+        end
+        else
+        begin
+          if AllFiles or (Pos(UpperCase(OnlyIfNameHas),UpperCase(FileInfo.Name))>0) then
+          begin
+            // Remove read-only file attribute so we can delete it:
+            if (FileInfo.Attr and faReadOnly)>0 then
+              FileSetAttrUTF8(CurFilename, FileInfo.Attr-faReadOnly);
+            if not DeleteFileUTF8(CurFilename) then
+            begin
+              FindCloseUTF8(FileInfo);
+              exit;
+            end;
+          end;
+        end;
+      end;
+    until FindNextUTF8(FileInfo)<>0;
+  end;
+  FindCloseUTF8(FileInfo);
+  Result:=true;
+end;
+
+function DownloadBase(aDownLoader:TBasicDownloader;URL, TargetFile: string; HTTPProxyHost: string=''; HTTPProxyPort: integer=0; HTTPProxyUser: string=''; HTTPProxyPassword: string=''): boolean;
+begin
+  result:=false;
+  if Length(HTTPProxyHost)>0 then aDownLoader.setProxy(HTTPProxyHost,HTTPProxyPort,HTTPProxyUser,HTTPProxyPassword);
+  result:=aDownLoader.getFile(URL,TargetFile);
+  if (NOT result) then // try only once again in case of error
+  begin
+    infoln('Error while trying to download '+URL+'. Trying again.',etDebug);
+    SysUtils.DeleteFile(TargetFile); // delete stale targetfile
+    result:=aDownLoader.getFile(URL,TargetFile);
+  end;
+end;
+
+
+function Download(UseWget:boolean; URL, TargetFile: string; HTTPProxyHost: string=''; HTTPProxyPort: integer=0; HTTPProxyUser: string=''; HTTPProxyPassword: string=''): boolean;
+var
+  aDownLoader:TBasicDownLoader;
+begin
+  result:=false;
+  if UseWget
+     then aDownLoader:=TWGetDownLoader.Create
+     else aDownLoader:=TNativeDownLoader.Create;
+  try
+    result:=DownloadBase(aDownLoader,URL,TargetFile,HTTPProxyHost,HTTPProxyPort,HTTPProxyUser,HTTPProxyPassword);
+  finally
+    aDownLoader.Destroy;
+>>>>>>> upstream/master
   end;
 end;
 
 // returns file size in bytes or 0 if not found.
-function FileSizeUTF8(FileName: string) : Int64;
+function FileSize(FileName: string) : Int64;
+//function FileSizeUTF8(FileName: string) : Int64;
 var
-  sr : TSearchRec;
+  sr : TRawByteSearchRec;
+  //sr : TSearchRec;
 begin
 {$ifdef unix}
   result:=filesize(FileName);
 {$else}
-  if FindFirstUTF8(FileName, faAnyFile, sr ) = 0 then
+  if SysUtils.FindFirst(FileName, faAnyFile, sr ) = 0 then
+  //if FindFirstUTF8(FileName, faAnyFile, sr ) = 0 then
      result := Int64(sr.FindData.nFileSizeHigh) shl Int64(32) + Int64(sr.FindData.nFileSizeLow)
   else
      result := 0;
-  FindCloseUTF8(sr);
+  SysUtils.FindClose(sr);
+  //FindCloseUTF8(sr);
 {$endif}
 end;
 
@@ -924,6 +1394,7 @@ end;
 
 procedure infoln(Message: string; Level: TEventType);
 const
+<<<<<<< HEAD
   {$ifndef FPCONLY}
   BeginSnippet='fpclazup: '; //helps identify messages as comfing from fpclazup instead of make etc
   {$else}
@@ -947,6 +1418,27 @@ begin
       if AnsiPos(LineEnding, Message)>0 then writeln(''); //Write an empty line before multiline messagse
       writeln(BeginSnippet+Seriousness+' '+ Message); //we misuse this for info output
       sleep(200); //hopefully allow output to be written without interfering with other output
+=======
+  {$ifdef LCL}
+  BeginSnippet='fpcupdeluxe: '; //helps identify messages as coming from fpcupdeluxe instead of make etc
+  {$else}
+  {$ifndef FPCONLY}
+  BeginSnippet='fpclazup: '; //helps identify messages as coming from fpclazup instead of make etc
+  {$else}
+  BeginSnippet='fpcup: '; //helps identify messages as coming from fpcup instead of make etc
+  {$endif}
+  {$endif}
+  Seriousness: array [TEventType] of string = ('custom:', 'info:', 'WARNING:', 'ERROR:', 'debug:');
+begin
+{$IFNDEF NOCONSOLE}
+  // Note: these strings should remain as is so any fpcupgui highlighter can pick it up
+  if (Level<>etDebug) then
+    begin
+      if AnsiPos(LineEnding, Message)>0 then writeln(''); //Write an empty line before multiline messagse
+      writeln(BeginSnippet+Seriousness[Level]+' '+ Message); //we misuse this for info output
+      //sleep(200); //hopefully allow output to be written without interfering with other output
+      sleep(1);
+>>>>>>> upstream/master
     end
   else
     begin
@@ -954,8 +1446,9 @@ begin
     {DEBUG conditional symbol is defined using
     Project Options/Other/Custom Options using -dDEBUG}
     if AnsiPos(LineEnding, Message)>0 then writeln(''); //Write an empty line before multiline messagse
-    writeln(BeginSnippet+Seriousness+' '+ Message); //we misuse this for info output
-    sleep(200); //hopefully allow output to be written without interfering with other output
+    writeln(BeginSnippet+Seriousness[Level]+' '+ Message); //we misuse this for info output
+    //sleep(200); //hopefully allow output to be written without interfering with other output
+    sleep(1);
     {$ENDIF}
     end;
 {$ENDIF NOCONSOLE}
@@ -988,6 +1481,7 @@ begin
   for i:=StartIndex to SearchIn.Count-1 do
   begin
     if CS then
+<<<<<<< HEAD
     begin
       if copy(SearchIn[i],1,length(SearchFor))=SearchFor then
       begin
@@ -997,6 +1491,17 @@ begin
     end
     else
     begin
+=======
+    begin
+      if copy(SearchIn[i],1,length(SearchFor))=SearchFor then
+      begin
+        Found:=true;
+        break;
+      end;
+    end
+    else
+    begin
+>>>>>>> upstream/master
       if UpperCase(copy(SearchIn[i],1,length(SearchFor)))=UpperCase(SearchFor) then
       begin
         Found:=true;
@@ -1053,6 +1558,8 @@ begin
   {$IFDEF UNIX}
   // Note: we're using external which because
   // FindDefaultExecutablePath
+  // or
+  // ExeSearch(Executable);
   // doesn't check if the user has execute permission
   // on the found file.
   // however
@@ -1114,12 +1621,16 @@ function GetDefaultCompilerFilename(const TargetCPU: string;
   Cross: boolean): string;
 begin
   if Cross then
+<<<<<<< HEAD
     {$ifdef darwin}
     Result:='ppc' // the mach-o format supports "fat" binaries whereby
                   // a single executable contains machine code for several architectures
     {$else}
     Result:='ppcross'
     {$endif}
+=======
+    Result:='ppcross'
+>>>>>>> upstream/master
   else
     Result:='ppc';
   if TargetCPU='' then
@@ -1167,6 +1678,200 @@ begin
      else result:=GetDefaultCompilerFilename(Cpu_Target,false);
 end;
 
+<<<<<<< HEAD
+=======
+function DoubleQuoteIfNeeded(FileName: string): string;
+begin
+  {$IFDEF MSWINDOWS}
+  // Unfortunately, we need to double quote in case there's spaces in the path and it's e.g. a .cmd file
+  result:=Trim(FileName);
+  if Pos(' ',result)>0 then
+  //if Copy(FileName, 1, 1) <> '"' then
+     Result := '"' + Result + '"';
+  {$ELSE}
+  Result := filename;
+  {$ENDIF}
+end;
+
+function GetNumericalVersion(aVersion: string): word;
+begin
+  result := 0;
+  if length(aVersion)=5 then
+  begin
+    result := ((ord(aVersion[1])-ord('0')) * 10000)+
+                ((ord(aVersion[3])-ord('0')) * 100)+
+                (ord(aVersion[5])-ord('0'));
+  end;
+end;
+
+function UppercaseFirstChar(s: String): String;
+var
+  ch, rest: String;
+begin
+  ch := Copy(s, 1, 1);
+  rest := Copy(s, Length(ch)+1, MaxInt);
+  result := UpperCase(ch) + LowerCase(rest);
+end;
+
+{TUnzipper}
+
+procedure TThreadedUnzipper.DoOnZipProgress;
+begin
+  if Assigned(FOnZipProgress) then
+    FOnZipProgress(Self, FPercent);
+end;
+
+procedure TThreadedUnzipper.DoOnZipFile;
+begin
+  if Assigned(FOnZipFile) then
+    FOnZipFile(Self, FCurrentFile, FFileCount, FTotalFileCount);
+end;
+
+procedure TThreadedUnzipper.DoOnZipCompleted;
+begin
+  if Assigned(FOnZipCompleted) then
+    FOnZipCompleted(Self);
+end;
+
+procedure TThreadedUnzipper.Execute;
+var
+  x:cardinal;
+  s:string;
+begin
+  try
+    FUnZipper.Examine;
+
+    {$ifdef MSWINDOWS}
+    // on windows, .files (hidden files) cannot be created !!??
+    // still to check on non-windows
+    if FFileList.Count=0 then
+    begin
+      for x:=0 to FUnZipper.Entries.Count-1 do
+      begin
+        if FUnZipper.UseUTF8
+          then s:=FUnZipper.Entries.Entries[x].UTF8ArchiveFileName
+          else s:=FUnZipper.Entries.Entries[x].ArchiveFileName;
+        if (Pos('/.',s)>0) OR (Pos('\.',s)>0) then continue;
+        if (Length(s)>0) AND (s[1]='.') then continue;
+        FFileList.Append(s);
+      end;
+    end;
+    {$endif}
+
+    if FFileList.Count=0
+      then FTotalFileCount:=FUnZipper.Entries.Count
+      else FTotalFileCount:=FFileList.Count;
+
+    if FFileList.Count=0
+      then FUnZipper.UnZipAllFiles
+      else FUnZipper.UnZipFiles(FFileList);
+  except
+    on E: Exception do
+    begin
+      FErrMsg := E.Message;
+      //Synchronize(@DoOnZipError);
+    end;
+  end;
+  Synchronize(@DoOnZipCompleted);
+end;
+
+constructor TThreadedUnzipper.Create;
+begin
+  inherited Create(True);
+  FreeOnTerminate := True;
+  FUnZipper := TUnZipper.Create;
+  FFileList := TStringList.Create;
+  FStarted := False;
+end;
+
+destructor TThreadedUnzipper.Destroy;
+begin
+  FFileList.Free;
+  FUnZipper.Free;
+  inherited Destroy;
+end;
+
+
+procedure TThreadedUnzipper.DoOnProgress(Sender : TObject; Const Pct : Double);
+begin
+  FPercent:=Pct;
+  Synchronize(@DoOnZipProgress);
+end;
+
+procedure TThreadedUnzipper.DoOnFile(Sender : TObject; Const AFileName : String);
+begin
+  Inc(FFileCount);
+  FCurrentFile:=ExtractFileNAme(AFileName);
+  Synchronize(@DoOnZipFile);
+end;
+
+
+procedure TThreadedUnzipper.DoUnZip(const ASrcFile, ADstDir: String; Files:array of string);
+var
+  i:word;
+begin
+  if FStarted then exit;
+  FUnZipper.Clear;
+  FUnZipper.OnPercent:=10;
+  FUnZipper.FileName := ASrcFile;
+  FUnZipper.OutputPath := ADstDir;
+  FUnZipper.OnProgress := @DoOnProgress;
+  FUnZipper.OnStartFile:= @DoOnFile;
+  FFileList.Clear;
+  if Length(Files)>0 then
+    for i := 0 to high(Files) do
+      FFileList.Append(Files[i]);
+  FPercent:=0;
+  FFileCount:=0;
+  FTotalFileCount:=0;
+  FStarted := True;
+  Start;
+end;
+
+procedure TNormalUnzipper.DoOnZipFile(Sender: TObject; aFile: string; FileCnt, TotalFileCnt:cardinal);
+begin
+  if TotalFileCnt>50000 then
+  begin
+    if (FileCnt MOD 5000)=0 then infoln('Extracted #'+InttoStr(FileCnt)+' files out of #'+InttoStr(TotalFileCnt),etInfo);
+  end
+  else
+  if TotalFileCnt>5000 then
+  begin
+    if (FileCnt MOD 500)=0 then infoln('Extracted #'+InttoStr(FileCnt)+' files out of #'+InttoStr(TotalFileCnt),etInfo);
+  end
+  else
+  if TotalFileCnt>500 then
+  begin
+    if (FileCnt MOD 50)=0 then infoln('Extracted #'+InttoStr(FileCnt)+' files out of #'+InttoStr(TotalFileCnt),etInfo);
+  end
+  else
+  if TotalFileCnt>50 then
+  begin
+    if (FileCnt MOD 5)=0 then infoln('Extracted #'+InttoStr(FileCnt)+' files out of #'+InttoStr(TotalFileCnt),etInfo);
+  end
+  else
+    infoln('Extracting '+aFile+'. #'+InttoStr(FileCnt)+' out of #'+InttoStr(TotalFileCnt),etInfo);
+end;
+
+function TNormalUnzipper.DoUnZip(const ASrcFile, ADstDir: String; Files:array of string):boolean;
+begin
+  result:=false;
+  FUnzipper := TThreadedUnzipper.Create;
+  try
+    FUnzipper.FreeOnTerminate:=False;
+    FUnzipper.OnZipFile := @DoOnZipFile;
+    FUnzipper.DoUnZip(ASrcFile, ADstDir, Files);
+    FUnzipper.WaitFor;
+    FUnzipper.Free;
+    result:=true;
+  except
+    FUnzipper.Free;
+  end;
+end;
+
+
+
+>>>>>>> upstream/master
 { TLogger }
 
 function TLogger.GetLogFile: string;
@@ -1192,7 +1897,11 @@ end;
 procedure TLogger.WriteLog(EventType: TEventType;Message: string; ToConsole: Boolean);
 begin
   FLog.Log(EventType, Message);
+<<<<<<< HEAD
   if ToConsole then infoln(Message,etInfo);
+=======
+  if ToConsole then infoln(Message,EventType);
+>>>>>>> upstream/master
 end;
 
 constructor TLogger.Create;
@@ -1209,6 +1918,739 @@ begin
   FLog.Free;
   inherited Destroy;
 end;
+<<<<<<< HEAD
+=======
+
+constructor TBasicDownLoader.Create;
+begin
+  Inherited Create(nil);
+end;
+
+constructor TBasicDownLoader.Create(AOwner: TComponent);
+begin
+  inherited;
+  FVerbose:=False;
+  FUsername:='';
+  FPassword:='';
+  FHTTPProxyHost:='';
+  FHTTPProxyPort:=0;
+  FHTTPProxyUser:='';
+  FHTTPProxyPassword:='';
+end;
+
+destructor TBasicDownLoader.Destroy;
+begin
+  inherited;
+end;
+
+procedure TBasicDownLoader.SetVerbose(aValue:boolean);
+begin
+  FVerbose:=aValue;
+end;
+
+procedure TBasicDownLoader.setCredentials(user,pass:string);
+begin
+  FUsername:=user;
+  FPassword:=pass;
+end;
+
+procedure TBasicDownLoader.setProxy(host:string;port:integer;user,pass:string);
+begin
+  FHTTPProxyHost:=host;
+  FHTTPProxyPort:=port;
+  FHTTPProxyUser:=user;
+  FHTTPProxyPassword:=pass;
+end;
+
+procedure TBasicDownLoader.parseFTPHTMLListing(F:TStream;filelist:TStringList);
+var
+  ADoc: THTMLDocument;
+  HTMFiles : TDOMNodeList;
+  HTMFile : TDOMNode;
+  FilenameValid:boolean;
+  i,j:integer;
+  s:string;
+begin
+  F.Position:=0;
+  try
+    ReadHTMLFile(ADoc,F);
+    // a bit rough, but it works
+    HTMFiles:=ADoc.GetElementsByTagName('a');
+    for i:=0 to HTMFiles.Count-1 do
+    begin
+      HtmFile:=HTMFiles.Item[i];
+      s:=HtmFile.TextContent;
+      if Length(s)>0 then
+      begin
+        // validate filename (also rough)
+        FilenameValid:=True;
+        for j:=1 to Length(s) do
+        begin
+          FilenameValid := (NOT SysUtils.CharInSet(s[j], [';', '=', '+', '<', '>', '|','"', '[', ']', '\', '/', '''']));
+          if (NOT FilenameValid) then break;
+        end;
+        if FilenameValid then FilenameValid:=(Pos('..',s)=0);
+        // restrict ourselves to zip and bz2 ... we only use this to retrieve lists of bootstrapper archives !
+        if FilenameValid then FilenameValid:=((LowerCase(ExtractFileExt(s))='.zip') OR (LowerCase(ExtractFileExt(s))='.bz2'));
+        // finally, add filename if all is ok !!
+        if FilenameValid then filelist.Add(s);
+      end;
+    end;
+  finally
+    aDoc.Free;
+  end;
+end;
+
+
+procedure TUseNativeDownLoader.DoHeaders(Sender : TObject);
+Var
+  I : Integer;
+begin
+  writeln('Response headers received:');
+  with (Sender as TFPHTTPClient) do
+    for I:=0 to ResponseHeaders.Count-1 do
+      writeln(ResponseHeaders[i]);
+end;
+
+procedure TUseNativeDownLoader.DoProgress(Sender: TObject; const ContentLength, CurrentPos: Int64);
+begin
+  If (ContentLength=0) then
+    writeln('Reading headers : ',CurrentPos,' Bytes.')
+  else If (ContentLength=-1) then
+    writeln('Reading data (no length available) : ',CurrentPos,' Bytes.')
+  else
+    writeln('Reading data : ',CurrentPos,' Bytes of ',ContentLength);
+end;
+
+procedure TUseNativeDownLoader.DoPassword(Sender: TObject; var RepeatRequest: Boolean);
+Var
+  H,UN,PW : String;
+  P : Integer;
+begin
+  if FUsername <> '' then
+  begin
+    TFPHTTPClient(Sender).UserName:=FUsername;
+    TFPHTTPClient(Sender).Password:=FPassword;
+  end
+  else
+  begin
+
+    with TFPHTTPClient(Sender) do
+    begin
+      H:=GetHeader(ResponseHeaders,'WWW-Authenticate');
+    end;
+    P:=Pos('realm',LowerCase(H));
+    if (P>0) then
+    begin
+      P:=Pos('"',H);
+      Delete(H,1,P);
+      P:=Pos('"',H);
+      H:=Copy(H,1,Pos('"',H)-1);
+    end;
+
+    writeln('Authorization required. Remote site says: ',H);
+    write('Enter username (empty quits): ');
+    readLn(UN);
+    RepeatRequest:=(UN<>'');
+    if RepeatRequest then
+    begin
+      write('Enter password: ');
+      readln(PW);
+      TFPHTTPClient(Sender).UserName:=UN;
+      TFPHTTPClient(Sender).Password:=PW;
+    end;
+
+  end;
+end;
+
+procedure TUseNativeDownLoader.ShowRedirect(ASender: TObject; const ASrc: String;
+  var ADest: String);
+begin
+  writeln('Following redirect from ',ASrc,'  ==> ',ADest);
+end;
+
+constructor TUseNativeDownLoader.Create;
+begin
+  aFPHTTPClient:=TFPHTTPClient.Create(Nil);
+  with aFPHTTPClient do
+  begin
+    AllowRedirect:=True;
+    FMaxRetries:=DefMaxRetries;
+    OnPassword:=@DoPassword;
+    if FVerbose then
+    begin
+      OnRedirect:=@ShowRedirect;
+      OnDataReceived:=@DoProgress;
+      OnHeaders:=@DoHeaders;
+    end;
+  end;
+end;
+
+procedure TUseNativeDownLoader.SetVerbose(aValue:boolean);
+begin
+  inherited;
+  with aFPHTTPClient do
+  begin
+    if FVerbose then
+    begin
+      OnRedirect:=@ShowRedirect;
+      OnDataReceived:=@DoProgress;
+      OnHeaders:=@DoHeaders;
+    end
+    else
+    begin
+      OnRedirect:=nil;
+      OnDataReceived:=nil;
+      OnHeaders:=nil;
+    end;
+  end;
+end;
+
+procedure TUseNativeDownLoader.setProxy(host:string;port:integer;user,pass:string);
+begin
+  inherited;
+  with aFPHTTPClient do
+  begin
+    {$IF DEFINED(FPC_FULLVERSION) AND (FPC_FULLVERSION > 30000)}
+    Proxy.Host:=FHTTPProxyHost;
+    Proxy.Port:=FHTTPProxyPort;
+    Proxy.UserName:=FHTTPProxyUser;
+    Proxy.Password:=FHTTPProxyPassword;
+    {$ENDIF}
+  end;
+end;
+
+function TUseNativeDownLoader.getFTPFileList(const URL:string; filelist:TStringList):boolean;
+var
+  i: Integer;
+  s: string;
+  URI : TURI;
+  P : String;
+begin
+  result:=false;
+  URI:=ParseURI(URL);
+  P:=URI.Protocol;
+  if CompareText(P,'ftp')=0 then
+  begin
+    with TFTPSend.Create do
+    try
+      if FUsername <> '' then
+      begin
+        Username := FUsername;
+        Password := FPassword;
+      end
+      else
+      begin
+        if Pos('ftp.freepascal.org',URL)>0 then
+        begin
+          Username := 'anonymous';
+          Password := 'fpc@example.com';
+        end;
+      end;
+      if Length(HTTPProxyHost)>0 then
+      begin
+        Sock.HTTPTunnelIP:=HTTPProxyHost;
+        Sock.HTTPTunnelPort:=InttoStr(HTTPProxyPort);
+        Sock.HTTPTunnelUser:=HTTPProxyUser;
+        Sock.HTTPTunnelPass:=HTTPProxyPassword;
+      end;
+      TargetHost := URI.Host;
+      if not Login then exit;
+      Result := List(URI.Path, False);
+      Logout;
+
+      for i := 0 to FtpList.Count -1 do
+      begin
+        s := FTPList[i].FileName;
+        filelist.Add(s);
+      end;
+
+      if FTPList.Lines.Count>0 then
+      begin
+        // do we have a HTML lsiting (due to a proxy) ?
+        if Pos('<!DOCTYPE HTML',UpperCase(FTPList.Lines.Strings[0]))=1 then
+        begin
+          parseFTPHTMLListing(DataStream,filelist);
+        end;
+      end;
+
+    finally
+      Free;
+    end;
+  end;
+end;
+
+function TUseNativeDownLoader.FTPDownload(Const URL : String; filename:string):boolean;
+var
+  URI : TURI;
+  aPort:integer;
+begin
+  // we will use synapse TFTPSend ... FPHTTPClient does not support FTP (yet)
+  result:=false;
+  URI:=ParseURI(URL);
+  aPort:=URI.Port;
+  if aPort=0 then aPort:=21;
+  Result := False;
+  with TFTPSend.Create do
+  try
+    TargetHost := URI.Host;
+    TargetPort := InttoStr(aPort);
+    if FUsername <> '' then
+    begin
+      Username := FUsername;
+      Password := FPassword;
+    end
+    else
+    begin
+      if Pos('ftp.freepascal.org',URL)>0 then
+      begin
+        Username := 'anonymous';
+        Password := 'fpc@example.com';
+      end;
+    end;
+    if Length(HTTPProxyHost)>0 then
+    begin
+      Sock.HTTPTunnelIP:=HTTPProxyHost;
+      Sock.HTTPTunnelPort:=InttoStr(HTTPProxyPort);
+      Sock.HTTPTunnelUser:=HTTPProxyUser;
+      Sock.HTTPTunnelPass:=HTTPProxyPassword;
+    end;
+    if Login then
+    begin
+      DirectFileName := filename;
+      DirectFile:=True;
+      Result := RetrieveFile(URI.Path+URI.Document, False);
+      Logout;
+    end;
+  finally
+    Free;
+  end;
+end;
+
+function TUseNativeDownLoader.HTTPDownload(Const URL : String; filename:string):boolean;
+var
+  tries:byte;
+  response: Integer;
+begin
+  result:=false;
+  tries:=0;
+  with aFPHTTPClient do
+  begin
+    repeat
+      //RequestHeaders.Add('Connection: Close');
+      // User-Agent needed for sourceforge and GitHub
+      AddHeader('User-Agent',USERAGENT);
+      try
+        Get(URL,filename);
+        response:=ResponseStatusCode;
+        result:=(response=200);
+        //result:=(response>=100) and (response<300);
+        if (NOT result) then
+        begin
+          Inc(tries);
+          if FVerbose then
+            infoln('TFPHTTPClient retry #' +InttoStr(tries)+ ' of download from '+URL+' into '+filename+'.',etDebug);
+        end;
+      except
+        tries:=(MaxRetries+1);
+      end;
+      if result then
+      begin
+        //AddHeader('Connection','Close');
+        //HTTPMethod('HEAD', URL, Nil, [200]);
+      end;
+    until (result or (tries>MaxRetries));
+  end;
+end;
+
+function TUseNativeDownLoader.getFile(const URL,filename:string):boolean;
+begin
+  try
+    result:=Download(URL,filename);
+  except
+    SysUtils.DeleteFile(filename);
+  end;
+end;
+
+function TUseNativeDownLoader.checkURL(const URL:string):boolean;
+var
+  tries:byte;
+  response: Integer;
+begin
+  result:=false;
+  tries:=0;
+  with aFPHTTPClient do
+  begin
+    // User-Agent needed for sourceforge and GitHub
+    AddHeader('User-Agent',USERAGENT);
+    AddHeader('Connection','Close');
+    repeat
+      try
+        HTTPMethod('HEAD', URL, Nil, []);
+        response:=ResponseStatusCode;
+        // 404 Not Found
+        // The requested resource could not be found but may be available in the future. Subsequent requests by the client are permissible.
+        result:=(response<>404);
+        if (NOT result) then
+        begin
+          Inc(tries);
+          if FVerbose then
+            infoln('TFPHTTPClient retry #' +InttoStr(tries)+ ' check of ' + URL + '.',etInfo);
+        end;
+      except
+        tries:=(MaxRetries+1);
+      end;
+    until (result or (tries>MaxRetries));
+    if result then
+    begin
+      //AddHeader('Connection','Close');
+      //HTTPMethod('HEAD', URL, Nil, [200]);
+    end;
+  end;
+end;
+
+destructor TUseNativeDownLoader.Destroy;
+begin
+  FreeAndNil(aFPHTTPClient);
+  inherited;
+end;
+
+function TUseNativeDownLoader.Download(const URL: String; filename:string):boolean;
+Var
+  URI : TURI;
+  P : String;
+begin
+  result:=false;
+  URI:=ParseURI(URL);
+  infoln('Native downloader: Getting ' + URI.Document + ' from '+URI.Host+URI.Path,etInfo);
+  P:=URI.Protocol;
+  If CompareText(P,'ftp')=0 then
+    result:=FTPDownload(URL,filename)
+  else if CompareText(P,'http')=0 then
+    result:=HTTPDownload(URL,filename)
+  else if CompareText(P,'https')=0 then
+    result:=HTTPDownload(URL,filename);
+end;
+
+
+{$IFDEF ENABLEWGET}
+
+// proxy still to do !!
+
+function TUseWGetDownloader.WGetDownload(Const URL : String; Dest : TStream):boolean;
+var
+  Buffer : Array[0..4096] of byte;
+  Count : Integer;
+begin
+  result:=false;
+  With TProcess.Create(Self) do
+  try
+    CommandLine:='wget -q --user-agent="'+USERAGENT+'" --tries='+InttoStr(MaxRetries)+' --output-document=- '+URL;
+    Options:=[poUsePipes,poNoConsole];
+    Execute;
+    while Running do
+    begin
+      Count:=Output.Read(Buffer,SizeOf(Buffer));
+      if (Count>0) then Dest.WriteBuffer(Buffer,Count);
+    end;
+    result:=((ExitStatus=0) AND (Dest.Size>0));
+  finally
+    Free;
+  end;
+end;
+
+function DoWrite(Ptr : Pointer; Size : size_t; nmemb: size_t; Data : Pointer) : size_t;cdecl;
+begin
+  if Data=nil then result:=0 else
+  begin
+    result:=TStream(Data).Write(Ptr^,Size*nmemb);
+  end;
+end;
+
+function TUseWGetDownloader.LibCurlDownload(Const URL : String; Dest : TStream):boolean;
+var
+  hCurl : pCurl;
+  res: CURLcode;
+  UserPass:string;
+begin
+  result:=false;
+
+  if LoadCurlLibrary then
+  begin
+
+    curl_global_init(CURL_GLOBAL_ALL);
+
+    try
+      hCurl:= curl_easy_init();
+      if Assigned(hCurl) then
+      begin
+
+        res:=CURLE_OK;
+
+        UserPass:='';
+        if FUsername <> '' then
+        begin
+          UserPass:=FUsername+':'+FPassword;
+        end
+        else
+        begin
+          if Pos('ftp.freepascal.org',URL)>0 then UserPass:='anonymous:fpc@example.com';
+        end;
+        if Length(UserPass)>0 then if res=CURLE_OK then res:=curl_easy_setopt(hCurl, CURLOPT_USERPWD, pointer(UserPass));
+
+        if res=CURLE_OK then res:=curl_easy_setopt(hCurl,CURLOPT_TCP_KEEPALIVE,1);
+        if res=CURLE_OK then res:=curl_easy_setopt(hCurl, CURLOPT_FOLLOWLOCATION, 1);
+        if res=CURLE_OK then res:=curl_easy_setopt(hCurl,CURLOPT_MAXREDIRS,50);
+        if res=CURLE_OK then res:=curl_easy_setopt(hCurl, CURLOPT_NOPROGRESS,1);
+        if res=CURLE_OK then res:=curl_easy_setopt(hCurl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2TLS);
+        if res=CURLE_OK then res:=curl_easy_setopt(hCurl,CURLOPT_URL,PChar(URL));
+        if res=CURLE_OK then res:=curl_easy_setopt(hCurl,CURLOPT_WRITEFUNCTION,@DoWrite);
+        if res=CURLE_OK then res:=curl_easy_setopt(hCurl,CURLOPT_WRITEDATA,Pointer(Dest));
+        if res=CURLE_OK then res:=curl_easy_setopt(hCurl,CURLOPT_USERAGENT,PChar(CURLUSERAGENT));
+
+        if res=CURLE_OK then res := curl_easy_perform(hCurl);
+
+        result:=((res=CURLE_OK) AND (Dest.Size>0));
+
+        curl_easy_cleanup(hCurl);
+      end;
+    except
+      // swallow libcurl exceptions
+    end;
+  end;
+end;
+
+
+function TUseWGetDownloader.FTPDownload(Const URL : String; Dest : TStream):boolean;
+begin
+  result:=LibCurlDownload(URL,Dest);
+  if (result) then infoln('LibCurl FTP file download success !!!', etInfo);
+  if (NOT result) then
+  begin
+    result:=WGetDownload(URL,Dest);
+    if (result) then infoln('Wget FTP file download success !', etInfo);
+  end;
+end;
+
+function TUseWGetDownloader.HTTPDownload(Const URL : String; Dest : TStream):boolean;
+begin
+  result:=LibCurlDownload(URL,Dest);
+  if (result) then infoln('LibCurl HTTP file download success !!!', etInfo);
+  if (NOT result) then
+  begin
+    result:=WGetDownload(URL,Dest);
+    if (result) then infoln('Wget HTTP file download success !', etInfo);
+  end;
+end;
+
+function TUseWGetDownloader.WGetFTPFileList(const URL:string; filelist:TStringList):boolean;
+const
+  WGETFTPLISTFILE='.listing';
+var
+  aURL:string;
+  aTFTPList:TFTPList;
+  s:string;
+  i:integer;
+  URI : TURI;
+  P : String;
+begin
+  result:=false;
+  URI:=ParseURI(URL);
+  P:=URI.Protocol;
+  if CompareText(P,'ftp')=0 then
+  begin
+    aURL:=URL;
+    if aURL[Length(aURL)]<>'/' then aURL:=aURL+'/';
+    result:=(ExecuteCommand('wget -q --no-remove-listing --tries='+InttoStr(MaxRetries)+' --spider '+aURL,false)=0);
+    if result then
+    begin
+      if FileExists(WGETFTPLISTFILE) then
+      begin
+        aTFTPList:=TFTPList.Create;
+        try
+          aTFTPList:=TFTPList.Create;
+          aTFTPList.Lines.LoadFromFile(WGETFTPLISTFILE);
+          aTFTPList.ParseLines;
+          for i := 0 to aTFTPList.Count -1 do
+          begin
+            s := aTFTPList[i].FileName;
+            filelist.Add(s);
+          end;
+          SysUtils.DeleteFile(WGETFTPLISTFILE);
+        finally
+          aTFTPList.Free;
+        end;
+      end;
+    end;
+  end;
+end;
+
+function TUseWGetDownloader.LibCurlFTPFileList(const URL:string; filelist:TStringList):boolean;
+var
+  hCurl : pCurl;
+  res: CURLcode;
+  URI : TURI;
+  s : String;
+  aTFTPList:TFTPList;
+  F:TMemoryStream;
+  i:integer;
+  UserPass :string;
+begin
+  result:=false;
+
+  URI:=ParseURI(URL);
+  s:=URI.Protocol;
+  if CompareText(s,'ftp')=0 then
+  begin
+    if LoadCurlLibrary then
+    begin
+
+      //curl_global_init(CURL_GLOBAL_ALL);
+
+      try
+        hCurl:= curl_easy_init();
+        if Assigned(hCurl) then
+        begin
+
+          res:=CURLE_OK;
+
+          F:=TMemoryStream.Create;
+          try
+
+            UserPass:='';
+            if FUsername <> '' then
+            begin
+              UserPass:=FUsername+':'+FPassword;
+            end
+            else
+            begin
+              if Pos('ftp.freepascal.org',URL)>0 then UserPass:='anonymous:fpc@example.com';
+            end;
+            if Length(UserPass)>0 then if res=CURLE_OK then res:=curl_easy_setopt(hCurl, CURLOPT_USERPWD, pointer(UserPass));
+
+            if res=CURLE_OK then res:=curl_easy_setopt(hCurl,CURLOPT_URL,pointer(URL));
+            if res=CURLE_OK then res:=curl_easy_setopt(hCurl,CURLOPT_WRITEFUNCTION,@DoWrite);
+            if res=CURLE_OK then res:=curl_easy_setopt(hCurl,CURLOPT_WRITEDATA,Pointer(F));
+            if res=CURLE_OK then res:=curl_easy_setopt(hCurl,CURLOPT_USERAGENT,CURLUSERAGENT);
+            if res=CURLE_OK then res:=curl_easy_perform(hCurl);
+
+            result:=(res=CURLE_OK);
+
+            curl_easy_cleanup(hCurl);
+
+            // libcurl correct exit ?
+            if result then
+            begin
+              // do we have data ?
+              if (F.Size>0) then
+              begin
+                F.Position:=0;
+                aTFTPList:=TFTPList.Create;
+                try
+                  aTFTPList:=TFTPList.Create;
+                  aTFTPList.Lines.LoadFromStream(F);
+
+                  if aTFTPList.Lines.Count>0 then
+                  begin
+                    // do we have a HTML listing (due to a proxy) ?
+                    if Pos('<!DOCTYPE HTML',UpperCase(aTFTPList.Lines.Strings[0]))=1 then
+                    begin
+                      parseFTPHTMLListing(F,filelist);
+                    end
+                    else
+                    begin
+                      // parse the pure FTP response
+                      aTFTPList.ParseLines;
+                      for i := 0 to aTFTPList.Count -1 do
+                      begin
+                        s := aTFTPList[i].FileName;
+                        filelist.Add(s);
+                      end;
+                    end;
+                  end;
+                finally
+                  aTFTPList.Free;
+                end;
+              end;
+            end;
+
+          finally
+            F.Free;
+          end;
+
+        end;
+      except
+        // swallow libcurl exceptions
+      end;
+    end;
+  end;
+end;
+
+function TUseWGetDownloader.getFTPFileList(const URL:string; filelist:TStringList):boolean;
+begin
+  result:=LibCurlFTPFileList(URL,filelist);
+  if (result) then infoln('LibCurl FTP filelist success !!!!', etInfo);
+  if (NOT result) then
+  begin
+    result:=WGetFTPFileList(URL,filelist);
+    if (result) then infoln('Wget FTP filelist success !!!!', etInfo);
+  end;
+end;
+
+function TUseWGetDownloader.checkURL(const URL:string):boolean;
+var
+  Output:string;
+begin
+  Output:='';
+  result:=(ExecuteCommand('wget --user-agent="'+USERAGENT+'" --tries='+InttoStr(MaxRetries)+' --spider '+URL,Output,false)=0);
+  if result then
+  begin
+    result:=(Pos('Remote file exists',Output)>0);
+  end;
+  if NOT result then
+  begin
+    // on github, we get a 403 forbidden for an existing file !!
+    result:=(Pos('github',Output)>0) AND (Pos('403 Forbidden',Output)>0);
+  end;
+end;
+
+function TUseWGetDownloader.Download(const URL: String; Dest: TStream):boolean;
+Var
+  URI : TURI;
+  P : String;
+begin
+  result:=false;
+  URI:=ParseURI(URL);
+  P:=URI.Protocol;
+  If CompareText(P,'ftp')=0 then
+    result:=FTPDownload(URL,Dest)
+  else if CompareText(P,'http')=0 then
+    result:=HTTPDownload(URL,Dest)
+  else if CompareText(P,'https')=0 then
+    result:=HTTPDownload(URL,Dest);
+end;
+
+function TUseWGetDownloader.getFile(const URL,filename:string):boolean;
+var
+  F : TFileStream;
+begin
+  result:=false;
+  try
+    F:=TFileStream.Create(filename,fmCreate);
+    try
+      result:=Download(URL,F);
+    finally
+      F.Free;
+    end;
+  except
+    result:=False;
+    SysUtils.DeleteFile(filename);
+  end;
+end;
+
+
+{$ENDIF ENABLEWGET}
+>>>>>>> upstream/master
 
 end.
 

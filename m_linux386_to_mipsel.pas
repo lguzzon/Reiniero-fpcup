@@ -71,7 +71,7 @@ Adapt (add) for other setups
 interface
 
 uses
-  Classes, SysUtils, m_crossinstaller,fpcuputil;
+  Classes, SysUtils, m_crossinstaller;
 
 implementation
 
@@ -82,7 +82,6 @@ type
 TLinux386_mipsel = class(TCrossInstaller)
 private
   FAlreadyWarned: boolean; //did we warn user about errors and fixes already?
-  function TargetSignature: string;
 public
   function GetLibs(Basepath:string):boolean;override;
   {$ifndef FPCONLY}
@@ -94,16 +93,17 @@ public
 end;
 
 { TLinux386_mipsel }
-function TLinux386_mipsel.TargetSignature: string;
-begin
-  result:=FTargetCPU+'-'+TargetOS;
-end;
 
 function TLinux386_mipsel.GetLibs(Basepath:string): boolean;
 const
   DirName='mipsel-linux';
   LibName='libc.so';
 begin
+<<<<<<< HEAD
+=======
+  result:=FLibsFound;
+  if result then exit;
+>>>>>>> upstream/master
 
   // begin simple: check presence of library file in basedir
   result:=SearchLibrary(Basepath,LibName);
@@ -114,6 +114,7 @@ begin
 
   if result then
   begin
+    FLibsFound:=true;
     //todo: check if -XR is needed for fpc root dir Prepend <x> to all linker search paths
     FFPCCFGSnippet:=FFPCCFGSnippet+LineEnding+
     '-Fl'+IncludeTrailingPathDelimiter(FLibsPath)+LineEnding+ {buildfaq 1.6.4/3.3.1: the directory to look for the target  libraries}
@@ -127,7 +128,7 @@ end;
 function TLinux386_mipsel.GetLibsLCL(LCL_Platform: string; Basepath: string): boolean;
 begin
   // todo: get gtk at least
-  result:=true;
+  result:=inherited;
 end;
 {$endif}
 
@@ -137,6 +138,7 @@ const
 var
   AsFile: string;
 begin
+<<<<<<< HEAD
   inherited;
 
   AsFile:=FBinUtilsPrefix+'as';
@@ -148,10 +150,16 @@ begin
   if not result then { try /usr/local/bin/<dirprefix>/ }
     result:=SearchBinUtil('/usr/local/bin/'+DirName,
       AsFile);
+=======
+  result:=inherited;
+  if result then exit;
 
-  if not result then { try /usr/local/bin/ }
-    result:=SearchBinUtil('/usr/local/bin',
-      AsFile);
+  AsFile:=FBinUtilsPrefix+'as';
+>>>>>>> upstream/master
+
+  result:=SearchBinUtil(BasePath,AsFile);
+  if not result then
+    result:=SimpleSearchBinUtil(BasePath,DirName,AsFile);
 
   if not result then { try /usr/bin/ }
     result:=SearchBinUtil('/usr/bin',
@@ -163,6 +171,10 @@ begin
 
   if result then
   begin
+<<<<<<< HEAD
+=======
+    FBinsFound:=true;
+>>>>>>> upstream/master
     infoln(FCrossModuleName + ': found binutils '+FBinUtilsPath,etInfo);
     // Configuration snippet for FPC
     FFPCCFGSnippet:=FFPCCFGSnippet+LineEnding+
@@ -184,7 +196,7 @@ begin
   FTargetCPU:='mipsel';
   FTargetOS:='linux';
   FAlreadyWarned:=false;
-  infoln('TLinux386_mipsel crosscompiler loading',etDebug);
+  ShowInfo;
 end;
 
 destructor TLinux386_mipsel.Destroy;

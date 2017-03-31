@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="9"/>
+    <Version Value="10"/>
     <PathDelim Value="\"/>
     <General>
       <Flags>
@@ -23,13 +23,14 @@
     <i18n>
       <EnableI18N LFM="False"/>
     </i18n>
-    <VersionInfo>
-      <StringTable ProductVersion=""/>
-    </VersionInfo>
     <MacroValues Count="1">
       <Macro1 Name="LCLWidgetType" Value="nogui"/>
     </MacroValues>
+<<<<<<< HEAD
     <BuildModes Count="8">
+=======
+    <BuildModes Count="9">
+>>>>>>> upstream/master
       <Item1 Name="Default" Default="True"/>
       <Item2 Name="Debug">
         <MacroValues Count="1">
@@ -39,7 +40,11 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
+<<<<<<< HEAD
             <Filename Value="bin\$(TargetCPU)-$(TargetOS)\fpcup"/>
+=======
+            <Filename Value="bin\$NameOnly($(ProjFile))-$(TargetCPU)-$(TargetOS)"/>
+>>>>>>> upstream/master
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
@@ -72,9 +77,12 @@ end;"/>
             </Debugging>
           </Linking>
           <Other>
+<<<<<<< HEAD
             <Verbosity>
               <ShowAll Value="True"/>
             </Verbosity>
+=======
+>>>>>>> upstream/master
             <WriteFPCLogo Value="False"/>
             <CustomOptions Value="-dDEBUG -dFPCONLY"/>
             <ExecuteBefore>
@@ -91,7 +99,11 @@ end;"/>
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
+<<<<<<< HEAD
             <Filename Value="bin\$(TargetCPU)-$(TargetOS)\fpcup"/>
+=======
+            <Filename Value="bin\$NameOnly($(ProjFile))-$(TargetCPU)-$(TargetOS)"/>
+>>>>>>> upstream/master
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
@@ -128,7 +140,11 @@ end;"/>
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
+<<<<<<< HEAD
             <Filename Value="bin\$(TargetCPU)-$(TargetOS)\fpcup64"/>
+=======
+            <Filename Value="bin\$NameOnly($(ProjFile))-$(TargetCPU)-$(TargetOS)"/>
+>>>>>>> upstream/master
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
@@ -165,11 +181,18 @@ end;"/>
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
+<<<<<<< HEAD
             <Filename Value="bin\$(TargetCPU)-$(TargetOS)\fpcup_linux_x86"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
             <Libraries Value="C:\development\cross\lib\i386-linux\"/>
+=======
+            <Filename Value="bin\$NameOnly($(ProjFile))-$(TargetCPU)-$(TargetOS)"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+>>>>>>> upstream/master
             <OtherUnitFiles Value="synaser"/>
             <UnitOutputDirectory Value="libfpcup\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
@@ -190,9 +213,12 @@ end;"/>
             <LinkSmart Value="True"/>
           </Linking>
           <Other>
+<<<<<<< HEAD
             <Verbosity>
               <ShowAll Value="True"/>
             </Verbosity>
+=======
+>>>>>>> upstream/master
             <WriteFPCLogo Value="False"/>
             <CustomOptions Value="-dFPCONLY"/>
             <ExecuteBefore>
@@ -201,24 +227,40 @@ end;"/>
           </Other>
         </CompilerOptions>
       </Item5>
+<<<<<<< HEAD
       <Item6 Name="androidarm">
+=======
+      <Item6 Name="linux64">
+>>>>>>> upstream/master
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
+<<<<<<< HEAD
             <Filename Value="bin\$(TargetCPU)-$(TargetOS)\fpcup_linux_arm"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
             <Libraries Value="C:\development\cross\lib\arm-android\"/>
+=======
+            <Filename Value="bin\$NameOnly($(ProjFile))-$(TargetCPU)-$(TargetOS)"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+>>>>>>> upstream/master
             <OtherUnitFiles Value="synaser"/>
             <UnitOutputDirectory Value="libfpcup\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
+<<<<<<< HEAD
             <TargetProcessor Value="ARMV6"/>
             <TargetCPU Value="arm"/>
             <TargetOS Value="android"/>
+=======
+            <TargetCPU Value="x86_64"/>
+            <TargetOS Value="linux"/>
+>>>>>>> upstream/master
             <Optimizations>
               <OptimizationLevel Value="2"/>
             </Optimizations>
@@ -233,29 +275,48 @@ end;"/>
           </Linking>
           <Other>
             <WriteFPCLogo Value="False"/>
+<<<<<<< HEAD
             <CustomOptions Value="-CpARMV7A -CfVFPV3 -OoFASTMATH -dFPCONLY"/>
+=======
+            <CustomOptions Value="-dFPCONLY"/>
+>>>>>>> upstream/master
             <ExecuteBefore>
               <CompileReasons Run="False"/>
             </ExecuteBefore>
           </Other>
         </CompilerOptions>
       </Item6>
+<<<<<<< HEAD
       <Item7 Name="linux64">
+=======
+      <Item7 Name="linuxaarch64">
+>>>>>>> upstream/master
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
+<<<<<<< HEAD
             <Filename Value="bin\$(TargetCPU)-$(TargetOS)\fpcup_linux_x64"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
             <Libraries Value="C:\development\cross\lib\x86_64-linux\"/>
+=======
+            <Filename Value="bin\$NameOnly($(ProjFile))-$(TargetCPU)-$(TargetOS)"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+>>>>>>> upstream/master
             <OtherUnitFiles Value="synaser"/>
             <UnitOutputDirectory Value="libfpcup\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
+<<<<<<< HEAD
             <TargetCPU Value="x86_64"/>
+=======
+            <TargetCPU Value="aarch64"/>
+>>>>>>> upstream/master
             <TargetOS Value="linux"/>
             <Optimizations>
               <OptimizationLevel Value="2"/>
@@ -270,9 +331,12 @@ end;"/>
             <LinkSmart Value="True"/>
           </Linking>
           <Other>
+<<<<<<< HEAD
             <Verbosity>
               <ShowAll Value="True"/>
             </Verbosity>
+=======
+>>>>>>> upstream/master
             <WriteFPCLogo Value="False"/>
             <CustomOptions Value="-dFPCONLY"/>
             <ExecuteBefore>
@@ -281,22 +345,38 @@ end;"/>
           </Other>
         </CompilerOptions>
       </Item7>
+<<<<<<< HEAD
       <Item8 Name="linuxaarch64">
+=======
+      <Item8 Name="freebsdi386">
+>>>>>>> upstream/master
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
+<<<<<<< HEAD
             <Filename Value="bin\$(TargetCPU)-$(TargetOS)\fpcup_linux_aarch64"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
             <Libraries Value="C:\development\cross\lib\aarch64-linux\"/>
+=======
+            <Filename Value="bin\$NameOnly($(ProjFile))-$(TargetCPU)-$(TargetOS)"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+>>>>>>> upstream/master
             <OtherUnitFiles Value="synaser"/>
             <UnitOutputDirectory Value="libfpcup\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
+<<<<<<< HEAD
             <TargetOS Value="linux"/>
+=======
+            <TargetCPU Value="i386"/>
+            <TargetOS Value="freebsd"/>
+>>>>>>> upstream/master
             <Optimizations>
               <OptimizationLevel Value="2"/>
             </Optimizations>
@@ -310,9 +390,12 @@ end;"/>
             <LinkSmart Value="True"/>
           </Linking>
           <Other>
+<<<<<<< HEAD
             <Verbosity>
               <ShowAll Value="True"/>
             </Verbosity>
+=======
+>>>>>>> upstream/master
             <WriteFPCLogo Value="False"/>
             <CustomOptions Value="-dFPCONLY"/>
             <ExecuteBefore>
@@ -321,6 +404,43 @@ end;"/>
           </Other>
         </CompilerOptions>
       </Item8>
+      <Item9 Name="freebsdx64">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="bin\$NameOnly($(ProjFile))-$(TargetCPU)-$(TargetOS)"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="synaser"/>
+            <UnitOutputDirectory Value="libfpcup\$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <TargetCPU Value="x86_64"/>
+            <TargetOS Value="freebsd"/>
+            <Optimizations>
+              <OptimizationLevel Value="2"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <StripSymbols Value="True"/>
+              <UseExternalDbgSyms Value="True"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+          </Linking>
+          <Other>
+            <WriteFPCLogo Value="False"/>
+            <CustomOptions Value="-dFPCONLY"/>
+            <ExecuteBefore>
+              <CompileReasons Run="False"/>
+            </ExecuteBefore>
+          </Other>
+        </CompilerOptions>
+      </Item9>
       <SharedMatrixOptions Count="1">
         <Item1 ID="233755810855" Modes="Default,Debug,win32" Type="IDEMacro" MacroName="LCLWidgetType" Value="nogui"/>
       </SharedMatrixOptions>
@@ -541,7 +661,11 @@ end;"/>
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
+<<<<<<< HEAD
       <Filename Value="bin\$(TargetCPU)-$(TargetOS)\fpcup"/>
+=======
+      <Filename Value="bin\$NameOnly($(ProjFile))-$(TargetCPU)-$(TargetOS)"/>
+>>>>>>> upstream/master
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>

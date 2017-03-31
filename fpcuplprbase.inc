@@ -1,6 +1,10 @@
 procedure WriteVersion;
 begin
+<<<<<<< HEAD
   writeln('Version: based on commit '+RevisionStr+' ('+versiondate+')');
+=======
+  writeln('Version: based on commit fpcup'+RevisionStr+' ('+versiondate+')');
+>>>>>>> upstream/master
   writeln('Build date: '+{$INCLUDE %DATE%}+' '+{$INCLUDE %TIME%});
   writeln('Compiled for CPU: '+lowercase({$INCLUDE %FPCTARGETCPU%})+' on '+lowercase({$INCLUDE %FPCTARGETOS%}));
   writeln('');
@@ -10,7 +14,11 @@ begin
   {$ENDIF}
 end;
 
+<<<<<<< HEAD
 procedure WriteHelp(ModuleList,ModuleEnabledList:TStringList;ConfigFile:string);
+=======
+procedure WriteHelp(ModuleList,ModuleEnabledList:TStringList);
+>>>>>>> upstream/master
 var
   i:integer;
   SortedModules: TStringList;
@@ -43,12 +51,21 @@ begin
   writeln('Options are not required; they include:');
   writeln(' help                  Show this text');
   writeln('');
+<<<<<<< HEAD
   writeln(' fpcURL=<URL>          SVN URL from which to download; default: fixes_3.0:');
   writeln('                       http://svn.freepascal.org/svn/fpc/branches/fixes_3_0');
   writeln('                       Accepts shortcuts: ');
   writeln('                       '+installerUniversal.GetAlias('fpcURL','list'));
   {$ifndef FPCONLY}
   writeln(' lazURL=<URL>          SVN URL from which to download; default: 1.4');
+=======
+  writeln(' fpcURL=<URL>          SVN URL from which to download; default: 3.0.0:');
+  writeln('                       http://svn.freepascal.org/svn/fpc/branches/3_0_0');
+  writeln('                       Accepts shortcuts: ');
+  writeln('                       '+installerUniversal.GetAlias('fpcURL','list'));
+  {$ifndef FPCONLY}
+  writeln(' lazURL=<URL>          SVN URL from which to download; default: 1.6');
+>>>>>>> upstream/master
   writeln('                       trunk (newest version):');
   writeln('                       http://svn.freepascal.org/svn/lazarus/trunk');
   writeln('                       Accepts shortcuts: ');
@@ -203,8 +220,17 @@ begin
   writeln('                       Else: uninstall only certain modules.');
   writeln(' logfilename=<file>    Location of log file. If nothing specified,');
   writeln('                       fpcup.log in the current directory.');
+<<<<<<< HEAD
   writeln(' getfullrepo           Get full repositories. If not set, just get files.');
   writeln(' disablejobs           Do not use (parallel) jobs when building FPC.');
+=======
+  writeln(' getfullrepo           Get full repositories (enabled by default, so a dummy).');
+  writeln('                       Depreciated, still here for backward compatibility');
+  writeln(' getfilesonly          Just get files. No repos. Uses "svn export"');
+  writeln(' disablejobs           Do not use (parallel) jobs when building FPC.');
+  writeln(' usewget               Use wget on Linux as downloader.');
+  writeln(' fpcsplit              Use different directory for source and binaries.');
+>>>>>>> upstream/master
   writeln(' noconfirm             No confirmation asked. For batch operation.');
   writeln(' verbose               Show output from svn and make.');
   writeln(' version               Show version info and quit.');
@@ -222,7 +248,11 @@ var
   //Linux, Unix,...
   FPCUpLink:string;
   {$ENDIF}
+<<<<<<< HEAD
   bNoConfirm,bHelp,bVersion:boolean;
+=======
+  bNoConfirm,bHelp,bVersion,bFPCsplit,bLazsplit:boolean;
+>>>>>>> upstream/master
   i, iCurrentOption: integer;
 	sAllParameters:string;
   sConfirm:string;
@@ -231,16 +261,24 @@ var
   sInstallDir: string; // Root installation directory
   bHaveInstalldir: boolean; //Has user explicitly specified a non-standard install dir?
   sLogFile: string; //Filename for log
+<<<<<<< HEAD
   {$ifndef FPCONLY}
   s:string;
   {$endif}
+=======
+  s:string;
+>>>>>>> upstream/master
   LeftOverOptions: TStringList; //Options left over after processing; may contain module=0 options
 begin
   // First check for settings.ini; it might not be present but specified anyway.
   // In any case, we need to extract it from the resource sometime unless we
   // want to create an installer for each platform.
+<<<<<<< HEAD
   if not FileExistsUTF8(SafeGetApplicationPath+SETTTINGSFILENAME) then
     SaveInisFromResource(SafeGetApplicationPath+SETTTINGSFILENAME,'settings_ini');
+=======
+  SaveInisFromResource(SafeGetApplicationPath+SETTTINGSFILENAME,'settings_ini');
+>>>>>>> upstream/master
 
   Options:=TCommandLineOptions.Create;
   try
@@ -263,7 +301,14 @@ begin
           LeftOverOptions.Add('noconfirm');
           LeftOverOptions.Add('uninstall');
           LeftOverOptions.Add('getfullrepo');
+<<<<<<< HEAD
           LeftOverOptions.Add('disablejobs');
+=======
+          LeftOverOptions.Add('getfilesonly');
+          LeftOverOptions.Add('disablejobs');
+          LeftOverOptions.Add('usewget');
+          LeftOverOptions.Add('fpcsplit');
+>>>>>>> upstream/master
           LeftOverOptions.Add('verbose');
           LeftOverOptions.Add('version');
           try
@@ -311,6 +356,12 @@ begin
       // before the params are removed again by Options.GetOption calls
       sAllParameters:=Options.Params.Text;
 
+<<<<<<< HEAD
+=======
+      bFPCsplit:=Options.GetOptionNoParam('','fpcsplit');
+      //bLazsplit:=Options.GetOptionNoParam('','lazsplit');
+
+>>>>>>> upstream/master
       {$IFDEF MSWINDOWS}
       // All directories specified: absolute paths without trailing delimiter
       sInstallDir:=Options.GetOption('','installdir','');
@@ -324,7 +375,17 @@ begin
       end;
       FInstaller.MakeDirectory:=ExcludeTrailingPathDelimiter(SafeExpandFileNameUTF8(Options.GetOption('','binutilsdir',sInstallDir+'\fpcbootstrap')));
       FInstaller.BootstrapCompilerDirectory:=ExcludeTrailingPathDelimiter(SafeExpandFileNameUTF8(Options.GetOption('','fpcbootstrapdir',sInstallDir+'\fpcbootstrap')));
+<<<<<<< HEAD
       FInstaller.FPCDirectory:=ExcludeTrailingPathDelimiter(SafeExpandFileNameUTF8(Options.GetOption('','fpcdir',sInstallDir+'\fpc')));
+=======
+
+      s:=ExcludeTrailingPathDelimiter(SafeExpandFileNameUTF8(Options.GetOption('','fpcdir',sInstallDir+'\fpc')));
+      FInstaller.FPCInstallDirectory:=s;
+      if bFPCsplit
+         then FInstaller.FPCSourceDirectory:=s+'src'
+         else FInstaller.FPCSourceDirectory:=s;
+
+>>>>>>> upstream/master
       {$ifndef FPCONLY}
       FInstaller.LazarusDirectory:=ExcludeTrailingPathDelimiter(SafeExpandFileNameUTF8(Options.GetOption('','lazdir',sInstallDir+'\lazarus')));
       {$endif}
@@ -341,7 +402,17 @@ begin
       end;
       FInstaller.MakeDirectory:=ExcludeTrailingPathDelimiter(SafeExpandFileNameUTF8(Options.GetOption('','binutilsdir','')));
       FInstaller.BootstrapCompilerDirectory:=ExcludeTrailingPathDelimiter(SafeExpandFileNameUTF8(Options.GetOption('','fpcbootstrapdir',sInstallDir+'/fpcbootstrap')));
+<<<<<<< HEAD
       FInstaller.FPCDirectory:=ExcludeTrailingPathDelimiter(SafeExpandFileNameUTF8(Options.GetOption('','fpcdir',sInstallDir+'/fpc')));
+=======
+
+      s:=ExcludeTrailingPathDelimiter(SafeExpandFileNameUTF8(Options.GetOption('','fpcdir',sInstallDir+'/fpc')));
+      FInstaller.FPCInstallDirectory:=s;
+      if bFPCsplit
+         then FInstaller.FPCSourceDirectory:=s+'src'
+         else FInstaller.FPCSourceDirectory:=s;
+
+>>>>>>> upstream/master
       {$ifndef FPCONLY}
       FInstaller.LazarusDirectory:=ExcludeTrailingPathDelimiter(SafeExpandFileNameUTF8(Options.GetOption('','lazdir',sInstallDir+'/lazarus')));
       {$endif}
@@ -440,7 +511,11 @@ begin
           FInstaller.ShortCutNameLazarus:='Lazarus_'+ExtractFileName(FInstaller.LazarusDirectory);
 
       FInstaller.LazarusOPT:=Options.GetOption('','lazOPT','');
+<<<<<<< HEAD
       {$endif}
+=======
+
+>>>>>>> upstream/master
       {$IF (defined(BSD)) and (not defined(Darwin))}
       //todo: check for other BSDs
       if (pos('-Fl/usr/local/lib/',FInstaller.LazarusOPT)=0) then
@@ -456,7 +531,10 @@ begin
         FInstaller.LazarusOpt:=FInstaller.LazarusOPT+' -Fl/usr/X11R6/lib';
       end;
       {$ENDIF defined(BSD) and not defined(Darwin)}
+<<<<<<< HEAD
       {$ifndef FPCONLY}
+=======
+>>>>>>> upstream/master
       FInstaller.LazarusDesiredRevision:=Options.GetOption('','lazrevision','',false);
       FInstaller.CrossLCL_Platform:=Options.GetOption('','lclplatform','');
       {$endif}
@@ -482,9 +560,22 @@ begin
       FInstaller.Uninstall:=Options.GetOptionNoParam('','uninstall',true);
       // do not add to default options:
       FInstaller.Verbose:=Options.GetOptionNoParam('','verbose',false);
+<<<<<<< HEAD
       FInstaller.ExportOnly:=(NOT Options.GetOptionNoParam('','getfullrepo',true));
       FInstaller.NoJobs:=Options.GetOptionNoParam('','disablejobs',true);
       FInstaller.UseGitClient:=Options.GetOptionNoParam('','usegitclient',false);
+=======
+      {$ifdef DEBUG}
+      FInstaller.Verbose:=True;
+      {$endif}
+
+      // getfullrepo is a depreciated option ... left here for compatibility only
+      Options.GetOptionNoParam('','getfullrepo',false);
+      FInstaller.ExportOnly:=(Options.GetOptionNoParam('','getfilesonly'));
+      FInstaller.NoJobs:=Options.GetOptionNoParam('','disablejobs');
+      FInstaller.UseGitClient:=Options.GetOptionNoParam('','usegitclient',false);
+      FInstaller.UseWget:=Options.GetOptionNoParam('','usewget');
+>>>>>>> upstream/master
       // do not add to default options:
       bVersion:=Options.GetOptionNoParam('','version',false);
       bNoConfirm:=Options.GetOptionNoParam('','noconfirm',true);
@@ -493,7 +584,13 @@ begin
       begin
       writeln('Error: wrong command line options given:');
       writeln(E.Message);
+<<<<<<< HEAD
       WriteHelp(FInstaller.ModulePublishedList,FInstaller.ModuleEnabledList,FInstaller.ConfigFile);
+=======
+      writeln('Press enter to see a list of all available command line options.');
+      readln;
+      WriteHelp(FInstaller.ModulePublishedList,FInstaller.ModuleEnabledList);
+>>>>>>> upstream/master
       result:=ERROR_WRONG_OPTIONS; //Quit with error resultcode
       exit;
       end
@@ -619,7 +716,13 @@ begin
         if LeftOverOptions.Count>0 then begin
           writeln('Error: wrong command line options given:');
           writeln(LeftOverOptions.Text);
+<<<<<<< HEAD
           WriteHelp(FInstaller.ModulePublishedList,FInstaller.ModuleEnabledList,FInstaller.ConfigFile);
+=======
+          writeln('Press enter to see a list of all available command line options.');
+          readln;
+          WriteHelp(FInstaller.ModulePublishedList,FInstaller.ModuleEnabledList);
+>>>>>>> upstream/master
           result:=ERROR_WRONG_OPTIONS; //Quit with error resultcode
           exit;
         end;
@@ -630,7 +733,11 @@ begin
 
     if bHelp then
       begin
+<<<<<<< HEAD
       writehelp(FInstaller.ModulePublishedList,FInstaller.ModuleEnabledList,FInstaller.ConfigFile);
+=======
+      writehelp(FInstaller.ModulePublishedList,FInstaller.ModuleEnabledList);
+>>>>>>> upstream/master
       result:=0; //quit without error
       end
     else if bVersion then
@@ -667,7 +774,11 @@ begin
       writeln('Bootstrap dir:      '+FInstaller.BootstrapCompilerDirectory);
       writeln('FPC URL:            '+FInstaller.FPCURL);
       writeln('FPC options:        '+FInstaller.FPCOPT);
+<<<<<<< HEAD
       writeln('FPC directory:      '+FInstaller.FPCDirectory);
+=======
+      writeln('FPC directory:      '+FInstaller.FPCInstallDirectory);
+>>>>>>> upstream/master
       {$ifndef FPCONLY}
       writeln('Lazarus URL:        '+FInstaller.LazarusURL);
       writeln('Lazarus options:    '+FInstaller.LazarusOPT);
@@ -779,10 +890,13 @@ begin
 
       // Note: we don't have a unicode version of SafeExpandFileName; investigate consequences for Unicode paths!??!?
       // User could have specified relative paths so we're normalizing them.
+<<<<<<< HEAD
       {$ifndef FPCONLY}
       if SafeExpandFileName(FInstaller.LazarusDirectory)=SafeExpandFileName(FInstaller.FPCDirectory) then
         writeln('WARNING: FPC and Lazarus directories are the same ('+FInstaller.FPCDirectory+'). This will not work!');
       {$endif}
+=======
+>>>>>>> upstream/master
       if (FInstaller.FPCDesiredRevision<>'') then
         writeln('WARNING: Reverting FPC to revision '+FInstaller.FPCDesiredRevision);
       {$ifndef FPCONLY}
@@ -826,7 +940,14 @@ end;
 procedure ShowErrorHints();
 begin
   writeln('Please check log for details. Possible troubleshooting steps:');
+<<<<<<< HEAD
   writeln('- run again with --verbose and check for make, lazbuild errors etc.');
+=======
+  writeln('First action :');
+  writeln('Run fpcup again with --verbose and check for make, lazbuild errors etc.');
+  writeln('Run fpcup again also in case of incomple download due to SVN errors.');
+  writeln;
+>>>>>>> upstream/master
   {$IFNDEF MSWINDOWS}
   writeln('- make sure there''s a valid SVN executable in your path.');
   writeln('- make sure the GNU binutils (make etc), windres, subversion client are installed');
@@ -834,10 +955,15 @@ begin
   writeln('  ln -s /usr/bin/i586-mingw32msvc-windres /usr/bin/windres');
   writeln('  see http://wiki.lazarus.freepascal.org/Lazarus_Resources#Checking_you_have_windres');
   {$ENDIF MSWINDOWS}
+<<<<<<< HEAD
   writeln('- if compiling Lazarus, make sure your lhelp is closed.');
   writeln('- try removing all intermediate files by running fpcup with the --clean option');
   writeln('  and/or manually deleting all *.ppu/*.a/*.o followed by svn up');
   writeln('- if that does not work: use the --uninstall option to remove all files ');
   writeln('  including your FPC and Lazarus directories');
   writeln('- remove the files in the bootstrap directory. fpcup will redownload if required.');
+=======
+  writeln('If that does not work ... last resort action :');
+  writeln('Remove all files from install-directory, and try again');
+>>>>>>> upstream/master
 end;

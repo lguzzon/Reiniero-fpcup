@@ -1,7 +1,21 @@
+<<<<<<< HEAD
 fpcup / fpclazup
 Original: https://bitbucket.org/reiniero/fpcup/
 New (this) : https://github.com/LongDirtyAnimAlf/Reiniero-fpcup
 
+=======
+Fpcup / fpclazup
+Original: https://bitbucket.org/reiniero/fpcup/
+New (this) : https://github.com/LongDirtyAnimAlf/Reiniero-fpcup
+
+Preliminary remark !
+====================
+Consider using fpcupdeluxe. Its a GUI installer/updater fully based on fpc(laz)up.
+Easy to use. With the most important options available.
+See : https://github.com/newpascal/fpcupdeluxe
+Wiki : http://wiki.freepascal.org/fpcupdeluxe
+
+>>>>>>> upstream/master
 Acknowledgement
 ===========
 As of August 28, 2015, this new repo contains all previous commits by Reinier.
@@ -10,7 +24,11 @@ Follow the fpcup development on http://forum.lazarus.freepascal.org/index.php/to
 
 What is it?
 ===========
+<<<<<<< HEAD
 fpcup and fpclazup are basically wrappers around svn/make on steroids.
+=======
+Fpcup and fpclazup are basically wrappers around svn/make on steroids.
+>>>>>>> upstream/master
 It tries to use the FPC/Lazarus build process as much as possible.
 
 Fpcup is a tool that gets the FreePascal Compiler (FPC) from its subversion repository
@@ -51,14 +69,16 @@ binutils, svn executable)
 
 - Linux
 =======
+- GNU make
 - the binutils (make etc); e.g. in a package called build-essential
 - bunzip2 (probably present in most distributions)
 - unzip
 - subversion client: svn
 - gdb is not needed for building FPC/Lazarus but needed for debugging 
   your Lazarus programs 
+- libX11, libgdk_pixbuf-2.0, libpango-1.0, libgdk-x11-2.0
 E.g. on Debian or Ubuntu, do something like:
-sudo aptitude install build-essential gdb subversion unzip
+sudo aptitude install make binutils build-essential gdb subversion zip unzip libx11-dev libgtk2.0-dev libgdk-pixbuf2.0-dev libcairo2-dev libpango1.0-dev
 
 - Apple OSX
 ===========

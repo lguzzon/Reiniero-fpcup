@@ -11,7 +11,7 @@ cd /usr/src && make build32 install32 && ldconfig -v -m -R /usr/lib32
 interface
 
 uses
-  Classes, SysUtils, m_crossinstaller, fpcuputil;
+  Classes, SysUtils, m_crossinstaller;
 
 implementation
 
@@ -24,9 +24,12 @@ private
 
 public
   function GetLibs(Basepath:string):boolean;override;
+<<<<<<< HEAD
   {$ifndef FPCONLY}
   function GetLibsLCL(LCL_Platform:string; Basepath:string):boolean;override;
   {$endif}
+=======
+>>>>>>> upstream/master
   function GetBinUtils(Basepath:string):boolean;override;
   constructor Create;
   destructor Destroy; override;
@@ -36,11 +39,16 @@ end;
 
 function TFreeBSD64_FreeBSD386.GetLibs(Basepath:string): boolean;
 begin
+  result:=FLibsFound;
+  if result then exit;
   FLibsPath:='/usr/lib32';
   result:=fileexists(FLibsPath+'/libc.so'); //let the c library be our coalmine canary
   if result then
+  begin
+    FLibsFound:=True;
     //todo: check if -XR is needed for fpc root dir Prepend <x> to all linker search paths
     FFPCCFGSnippet:=FFPCCFGSnippet+LineEnding+
+<<<<<<< HEAD
     '-Fl'+IncludeTrailingPathDelimiter(FLibsPath) {buildfaq 1.6.4/3.3.1:  the directory to look for the target  libraries};
 end;
 
@@ -48,20 +56,27 @@ end;
 function TFreeBSD64_FreeBSD386.GetLibsLCL(LCL_Platform: string; Basepath: string): boolean;
 begin
   result:=true;
+=======
+    '-Fl'+IncludeTrailingPathDelimiter(FLibsPath); // buildfaq 1.6.4/3.3.1:  the directory to look for the target  libraries
+  end;
+>>>>>>> upstream/master
 end;
 {$endif}
 
 function TFreeBSD64_FreeBSD386.GetBinUtils(Basepath:string): boolean;
 begin
-  inherited;
+  result:=inherited;
+  if result then exit;
+
   //todo: remove once done
-  infoln('TFreeBSD64_FreeBSD386: Experimental, not finished. Stopping now.',etError);
+  ShowInfo('Experimental, not finished. Stopping now.',etError);
   result:=false;
   FBinUtilsPath:='/usr/bin'; //try with regular binutils
   FBinUtilsPrefix:=''; // we have the "native" names, no prefix
   result:=true;
   if result then
   begin
+    FBinsFound:=true;
     // Configuration snippet for FPC
     FFPCCFGSnippet:=FFPCCFGSnippet+LineEnding+
     '-FD'+IncludeTrailingPathDelimiter(FBinUtilsPath)+LineEnding+ {search this directory for compiler utilities}
@@ -73,13 +88,13 @@ end;
 constructor TFreeBSD64_FreeBSD386.Create;
 begin
   inherited Create;
-  FCrossModuleName:='FreeBSD64_FreeBSD386';
+  FCrossModuleNamePrefix:='TFreeBSD64';
   FTargetCPU:='i386';
   FTargetOS:='freebsd';
   FBinUtilsPath:='';
   FBinUtilsPrefix:='';
   FLibsPath:='';
-  infoln('TFreeBSD64_FreeBSD386 crosscompiler loading',etDebug);
+  ShowInfo;
 end;
 
 destructor TFreeBSD64_FreeBSD386.Destroy;

@@ -10,12 +10,13 @@ Requirements: FPC should have an internal linker
 interface
 
 uses
-  Classes, SysUtils, m_crossinstaller, fpcuputil;
+  Classes, SysUtils, m_crossinstaller;
 
 implementation
+
 const
-  ErrorNotFound='An error occurred getting cross compiling binutils/libraries.'+LineEnding+
-    'todo: specify what exactly is missing';
+  ARCH='x86_64';
+  OS='win64';
 
 type
 
@@ -26,9 +27,12 @@ private
   FAlreadyWarned: boolean; //did we warn user about errors and fixes already?
 public
   function GetLibs(Basepath:string):boolean;override;
+<<<<<<< HEAD
   {$ifndef FPCONLY}
   function GetLibsLCL(LCL_Platform:string; Basepath:string):boolean;override;
   {$endif}
+=======
+>>>>>>> upstream/master
   function GetBinUtils(Basepath:string):boolean;override;
   constructor Create;
   destructor Destroy; override;
@@ -38,8 +42,11 @@ end;
 
 function Tanyinternallinker_win64.GetLibs(Basepath:string): boolean;
 begin
+  result:=FLibsFound;
+  if result then exit;
   FLibsPath:='';
   result:=true;
+<<<<<<< HEAD
   if (result=false) and (FAlreadyWarned=false) then
   begin
     infoln(ErrorNotFound,etError);
@@ -51,31 +58,37 @@ end;
 function Tanyinternallinker_win64.GetLibsLCL(LCL_Platform: string; Basepath: string): boolean;
 begin
   result:=true;
+=======
+  FLibsFound:=true;
+>>>>>>> upstream/master
 end;
 {$endif}
 
 function Tanyinternallinker_win64.GetBinUtils(Basepath:string): boolean;
 begin
-  inherited;
+  result:=inherited;
+  if result then exit;
   FBinUtilsPath:='';
   FBinUtilsPrefix:=''; // we have the "native" names, no prefix
   result:=true;
-  if (result=false) and (FAlreadyWarned=false) then
-  begin
-    infoln(ErrorNotFound,etError);
-    FAlreadyWarned:=true;
-  end;
+  FBinsFound:=true;
 end;
 
 constructor Tanyinternallinker_win64.Create;
 begin
   inherited Create;
+<<<<<<< HEAD
   FCrossModuleName:='anyinternallinker_win64';
   FTargetCPU:='x86_64';
   FTargetOS:='win64';
+=======
+  FTargetCPU:=ARCH;
+  FTargetOS:=OS;
+  FCrossModuleNamePrefix:='TAnyinternallinker';
+>>>>>>> upstream/master
   FAlreadyWarned:=false;
   FFPCCFGSnippet:=''; //no need to change fpc.cfg
-  infoln('Tanyinternallinker_win64 crosscompiler loading',etDebug);
+  ShowInfo;
 end;
 
 destructor Tanyinternallinker_win64.Destroy;

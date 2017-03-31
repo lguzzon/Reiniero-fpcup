@@ -31,7 +31,7 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 {
 Setup: based on cross binaries from
-http://svn2.freepascal.org/svn/fpcbuild/binaries/i386-win32/
+http://svn.freepascal.org/svn/fpcbuild/binaries/i386-win32/
 with binutils 2.22
 
 - superseding those from
@@ -57,7 +57,7 @@ arm-wince-windres.exe
 interface
 
 uses
-  Classes, SysUtils, m_crossinstaller,fpcuputil;
+  Classes, SysUtils, m_crossinstaller;
 
 implementation
 type
@@ -66,7 +66,6 @@ type
 TWin32_wincearm = class(TCrossInstaller)
 private
   FAlreadyWarned: boolean; //did we warn user about errors and fixes already?
-  function TargetSignature: string;
 public
   function GetLibs(Basepath:string):boolean;override;
   {$ifndef FPCONLY}
@@ -78,31 +77,35 @@ public
 end;
 
 { TWin32_wincearm }
-function TWin32_wincearm.TargetSignature: string;
-begin
-  result:=FTargetCPU+'-'+TargetOS;
-end;
 
 function TWin32_wincearm.GetLibs(Basepath:string): boolean;
 const
   DirName='arm-wince';
 begin
+  result:=FLibsFound;
+  if result then exit;
+
   // Wince does not need libs by default, but user can add them.
 
   // search local paths based on libbraries provided for or adviced by fpc itself
+<<<<<<< HEAD
   result:=SimpleSearchLibrary(BasePath,DirName);
+=======
+  result:=SimpleSearchLibrary(BasePath,DirName,'');
+>>>>>>> upstream/master
 
   if result then
   begin
+    FLibsFound:=true;
     //todo: check if -XR is needed for fpc root dir Prepend <x> to all linker search paths
     FFPCCFGSnippet:=FFPCCFGSnippet+LineEnding+
     '-Fl'+IncludeTrailingPathDelimiter(FLibsPath) {buildfaq 1.6.4/3.3.1:  the directory to look for the target  libraries};
-    infoln('TWin32_wincearm: found libspath '+FLibsPath,etInfo);
+    ShowInfo('Found libspath '+FLibsPath,etInfo);
   end;
   if not result then
   begin
     //libs path is optional; it can be empty
-    infoln('TWin32_wincearm: libspath ignored; it is optional for this cross compiler.',etInfo);
+    ShowInfo('Libspath ignored; it is optional for this cross compiler.',etInfo);
     FLibsPath:='';
     result:=true;
   end;
@@ -112,8 +115,8 @@ end;
 function TWin32_wincearm.GetLibsLCL(LCL_Platform: string; Basepath: string): boolean;
 begin
   // todo: get gtk at least, add to FFPCCFGSnippet
-  infoln('todo: implement lcl libs path from basepath '+BasePath,etdebug);
-  result:=true;
+  ShowInfo('Todo: implement lcl libs path from basepath '+BasePath,etdebug);
+  result:=inherited;
 end;
 {$endif}
 
@@ -122,30 +125,56 @@ const
   DirName='arm-wince';
 var
   AsFile: string;
+  BinPrefixTry: string;
 begin
+<<<<<<< HEAD
   inherited;
 
   AsFile:=FBinUtilsPrefix+'as.exe';
 
   result:=SearchBinUtil(BasePath,AsFile);
 
+=======
+  result:=inherited;
+  if result then exit;
+
+  AsFile:=FBinUtilsPrefix+'as.exe';
+
+  result:=SearchBinUtil(BasePath,AsFile);
+>>>>>>> upstream/master
   if not result then
     result:=SimpleSearchBinUtil(BasePath,DirName,AsFile);
 
   // Search for FTP (old) version
   if not result then
   begin
+<<<<<<< HEAD
     FBinUtilsPrefix:='arm-wince-pe-';
     AsFile:=FBinUtilsPrefix+'as.exe';
     result:=SearchBinUtil(BasePath,AsFile);
     if not result then
       result:=SimpleSearchBinUtil(BasePath,DirName,AsFile);
   end;
+=======
+    BinPrefixTry:='arm-wince-pe-';
+    AsFile:=BinPrefixTry+'as.exe';
+    result:=SearchBinUtil(BasePath,AsFile);
+    if not result then result:=SimpleSearchBinUtil(BasePath,DirName,AsFile);
+    if result then FBinUtilsPrefix:=BinPrefixTry;
+  end;
+
+  SearchBinUtilsInfo(result);
+>>>>>>> upstream/master
 
   SearchBinUtilsInfo(result);
   if result then
   begin
+<<<<<<< HEAD
     infoln(FCrossModuleName + ': found binutils '+FBinUtilsPath,etInfo);
+=======
+    FBinsFound:=true;
+    ShowInfo('Found binutils '+FBinUtilsPath,etInfo);
+>>>>>>> upstream/master
     // Configuration snippet for FPC
     //http://wiki.freepascal.org/Setup_Cross_Compile_For_ARM#Make_FPC_able_to_cross_compile_for_arm-wince
     //adjusted by
@@ -161,7 +190,7 @@ end;
 constructor TWin32_wincearm.Create;
 begin
   inherited Create;
-  FCrossModuleName:='Win32_wincearm';
+  FCrossModuleNamePrefix:='WinAll';
   FBinUtilsPrefix:='arm-wince-'; //search algorithm may modify this
   FBinUtilsPath:='';
   FFPCCFGSnippet:=''; //will be filled in later
@@ -169,7 +198,7 @@ begin
   FTargetCPU:='arm';
   FTargetOS:='wince';
   FAlreadyWarned:=false;
-  infoln('TWin32_wincearm crosscompiler loading',etDebug);
+  ShowInfo;
 end;
 
 destructor TWin32_wincearm.Destroy;

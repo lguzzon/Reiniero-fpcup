@@ -2,18 +2,30 @@
 <CONFIG>
   <ProjectSession>
     <PathDelim Value="\"/>
+<<<<<<< HEAD
     <Version Value="9"/>
     <BuildModes Count="3" Active="Default">
+=======
+    <Version Value="10"/>
+    <BuildModes Count="3" Active="darwin64">
+>>>>>>> upstream/master
       <Item1 Name="linuxarmhf">
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
+<<<<<<< HEAD
             <Filename Value="bin\$(TargetCPU)-$(TargetOS)\fpclazup_linux_armhf"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
             <Libraries Value="C:\development\cross\lib\arm-linux-pi\"/>
+=======
+            <Filename Value="bin\$NameOnly($(ProjFile))-$(TargetCPU)-$(TargetOS)"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+>>>>>>> upstream/master
             <OtherUnitFiles Value="synaser"/>
             <UnitOutputDirectory Value="libfpclazup\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
@@ -48,12 +60,20 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
+<<<<<<< HEAD
             <Filename Value="bin\$(TargetCPU)-$(TargetOS)\fpclazup_osx_x86"/>
+=======
+            <Filename Value="bin\$NameOnly($(ProjFile))-$(TargetCPU)-$(TargetOS)"/>
+>>>>>>> upstream/master
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
             <OtherUnitFiles Value="synaser"/>
+<<<<<<< HEAD
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+=======
+            <UnitOutputDirectory Value="libfpclazup\$(TargetCPU)-$(TargetOS)"/>
+>>>>>>> upstream/master
           </SearchPaths>
           <Conditionals Value="if TargetOS = 'darwin' then begin
   UsageCustomOptions += ' -k-macosx_version_min -k10.6';
@@ -87,12 +107,20 @@ end;"/>
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
+<<<<<<< HEAD
             <Filename Value="bin\$(TargetCPU)-$(TargetOS)\fpclazup_osx_x64"/>
+=======
+            <Filename Value="bin\$NameOnly($(ProjFile))-$(TargetCPU)-$(TargetOS)"/>
+>>>>>>> upstream/master
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
             <OtherUnitFiles Value="synaser"/>
+<<<<<<< HEAD
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+=======
+            <UnitOutputDirectory Value="libfpclazup\$(TargetCPU)-$(TargetOS)"/>
+>>>>>>> upstream/master
           </SearchPaths>
           <Conditionals Value="if TargetOS = 'darwin' then begin
   UsageCustomOptions += ' -k-macosx_version_min -k10.6';
@@ -135,64 +163,108 @@ end;"/>
         <Filename Value="svnclient.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
+=======
+        <TopLine Value="276"/>
+        <CursorPos X="33" Y="294"/>
+>>>>>>> upstream/master
         <UsageCount Value="200"/>
       </Unit1>
       <Unit2>
         <Filename Value="updatelazconfig.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
         <TopLine Value="480"/>
         <CursorPos X="41" Y="504"/>
+=======
+>>>>>>> upstream/master
         <UsageCount Value="200"/>
       </Unit2>
       <Unit3>
         <Filename Value="processutils.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
         <TopLine Value="136"/>
         <CursorPos X="10" Y="151"/>
+=======
+        <TopLine Value="250"/>
+        <CursorPos X="25" Y="257"/>
+>>>>>>> upstream/master
         <UsageCount Value="200"/>
       </Unit3>
       <Unit4>
         <Filename Value="installercore.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="installerCore"/>
+<<<<<<< HEAD
         <EditorIndex Value="5"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
+=======
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1033"/>
+        <CursorPos X="19" Y="1039"/>
+        <UsageCount Value="200"/>
+>>>>>>> upstream/master
       </Unit4>
       <Unit5>
         <Filename Value="installerfpc.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="installerFpc"/>
+<<<<<<< HEAD
         <EditorIndex Value="3"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
+=======
+        <EditorIndex Value="-1"/>
+        <TopLine Value="482"/>
+        <CursorPos Y="502"/>
+        <UsageCount Value="200"/>
+>>>>>>> upstream/master
       </Unit5>
       <Unit6>
         <Filename Value="installerlazarus.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="installerLazarus"/>
+<<<<<<< HEAD
         <EditorIndex Value="4"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
+=======
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1005"/>
+        <CursorPos X="16" Y="1021"/>
+        <UsageCount Value="200"/>
+>>>>>>> upstream/master
       </Unit6>
       <Unit7>
         <Filename Value="installerhelp.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="installerHelp"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
         <TopLine Value="692"/>
         <CursorPos X="23" Y="708"/>
+=======
+>>>>>>> upstream/master
         <UsageCount Value="200"/>
       </Unit7>
       <Unit8>
         <Filename Value="installeruniversal.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="installerUniversal"/>
+<<<<<<< HEAD
         <EditorIndex Value="6"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
+=======
+        <EditorIndex Value="-1"/>
+        <TopLine Value="308"/>
+        <CursorPos Y="316"/>
+        <UsageCount Value="200"/>
+>>>>>>> upstream/master
       </Unit8>
       <Unit9>
         <Filename Value="fpcup.ini"/>
@@ -206,9 +278,16 @@ end;"/>
         <Filename Value="installermanager.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="installerManager"/>
+<<<<<<< HEAD
         <EditorIndex Value="7"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
+=======
+        <EditorIndex Value="-1"/>
+        <TopLine Value="501"/>
+        <CursorPos X="46" Y="518"/>
+        <UsageCount Value="200"/>
+>>>>>>> upstream/master
       </Unit10>
       <Unit11>
         <Filename Value="m_crosswin64.pas"/>
@@ -231,14 +310,22 @@ end;"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="winInstaller"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
         <TopLine Value="97"/>
         <CursorPos X="35" Y="103"/>
+=======
+>>>>>>> upstream/master
         <UsageCount Value="200"/>
       </Unit13>
       <Unit14>
         <Filename Value="commandline.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
+=======
+        <TopLine Value="182"/>
+        <CursorPos X="11" Y="190"/>
+>>>>>>> upstream/master
         <UsageCount Value="200"/>
       </Unit14>
       <Unit15>
@@ -251,12 +338,22 @@ end;"/>
         <Filename Value="repoclient.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
+=======
+        <TopLine Value="24"/>
+        <CursorPos X="3" Y="41"/>
+>>>>>>> upstream/master
         <UsageCount Value="200"/>
       </Unit16>
       <Unit17>
         <Filename Value="gitclient.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
+=======
+        <TopLine Value="89"/>
+        <CursorPos Y="120"/>
+>>>>>>> upstream/master
         <UsageCount Value="200"/>
       </Unit17>
       <Unit18>
@@ -311,8 +408,13 @@ end;"/>
         <Filename Value="m_win32_to_linux386.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
         <TopLine Value="88"/>
         <CursorPos Y="113"/>
+=======
+        <TopLine Value="89"/>
+        <CursorPos Y="101"/>
+>>>>>>> upstream/master
         <UsageCount Value="200"/>
       </Unit24>
       <Unit25>
@@ -325,7 +427,12 @@ end;"/>
         <Filename Value="m_win64_to_linux64.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
         <CursorPos X="32" Y="11"/>
+=======
+        <TopLine Value="89"/>
+        <CursorPos Y="95"/>
+>>>>>>> upstream/master
         <UsageCount Value="200"/>
       </Unit26>
       <Unit27>
@@ -340,16 +447,26 @@ end;"/>
         <Filename Value="m_any_to_androidarm.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
         <TopLine Value="236"/>
         <CursorPos X="4" Y="467"/>
+=======
+        <TopLine Value="272"/>
+        <CursorPos X="20" Y="272"/>
+>>>>>>> upstream/master
         <UsageCount Value="200"/>
       </Unit28>
       <Unit29>
         <Filename Value="m_any_to_linuxmipsel.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
         <TopLine Value="265"/>
         <CursorPos X="127" Y="282"/>
+=======
+        <TopLine Value="32"/>
+        <CursorPos X="11" Y="47"/>
+>>>>>>> upstream/master
         <UsageCount Value="200"/>
       </Unit29>
       <Unit30>
@@ -364,8 +481,13 @@ end;"/>
         <Filename Value="m_win32_to_wincearm.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
         <TopLine Value="92"/>
         <CursorPos Y="118"/>
+=======
+        <TopLine Value="19"/>
+        <CursorPos X="11" Y="34"/>
+>>>>>>> upstream/master
         <UsageCount Value="200"/>
       </Unit31>
       <Unit32>
@@ -388,16 +510,26 @@ end;"/>
         <Filename Value="m_any_to_embeddedarm.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
         <TopLine Value="204"/>
         <CursorPos X="6" Y="150"/>
+=======
+        <TopLine Value="18"/>
+        <CursorPos X="11" Y="33"/>
+>>>>>>> upstream/master
         <UsageCount Value="200"/>
       </Unit34>
       <Unit35>
         <Filename Value="m_win32_to_linuxmips.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
         <TopLine Value="91"/>
         <CursorPos Y="116"/>
+=======
+        <TopLine Value="18"/>
+        <CursorPos X="11" Y="33"/>
+>>>>>>> upstream/master
         <UsageCount Value="200"/>
       </Unit35>
       <Unit36>
@@ -410,16 +542,27 @@ end;"/>
         <Filename Value="m_any_to_linux386.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
         <TopLine Value="110"/>
         <CursorPos X="5" Y="131"/>
+=======
+        <TopLine Value="86"/>
+        <CursorPos Y="100"/>
+>>>>>>> upstream/master
         <UsageCount Value="200"/>
       </Unit37>
       <Unit38>
         <Filename Value="hgversion.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
         <CursorPos X="31" Y="19"/>
         <UsageCount Value="127"/>
+=======
+        <TopLine Value="7"/>
+        <CursorPos X="27" Y="22"/>
+        <UsageCount Value="200"/>
+>>>>>>> upstream/master
       </Unit38>
       <Unit39>
         <Filename Value="jedi.inc"/>
@@ -428,7 +571,11 @@ end;"/>
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
+<<<<<<< HEAD
         <UsageCount Value="127"/>
+=======
+        <UsageCount Value="200"/>
+>>>>>>> upstream/master
       </Unit39>
       <Unit40>
         <Filename Value="m_linux386_to_mipsel.pas"/>
@@ -436,47 +583,80 @@ end;"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="107"/>
         <CursorPos Y="132"/>
+<<<<<<< HEAD
         <UsageCount Value="127"/>
+=======
+        <UsageCount Value="200"/>
+>>>>>>> upstream/master
       </Unit40>
       <Unit41>
         <Filename Value="revision.inc"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
         <UsageCount Value="127"/>
+=======
+        <CursorPos X="12"/>
+        <UsageCount Value="200"/>
+>>>>>>> upstream/master
       </Unit41>
       <Unit42>
         <Filename Value="m_any_to_linuxarm.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
         <UsageCount Value="120"/>
+=======
+        <UsageCount Value="200"/>
+>>>>>>> upstream/master
       </Unit42>
       <Unit43>
         <Filename Value="m_any_to_androidjvm.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
         <UsageCount Value="84"/>
+=======
+        <UsageCount Value="165"/>
+>>>>>>> upstream/master
       </Unit43>
       <Unit44>
         <Filename Value="m_any_to_javajvm.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
         <UsageCount Value="84"/>
+=======
+        <UsageCount Value="165"/>
+>>>>>>> upstream/master
       </Unit44>
       <Unit45>
         <Filename Value="fpcuputil.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
         <UsageCount Value="82"/>
+=======
+        <TopLine Value="29"/>
+        <CursorPos X="66" Y="32"/>
+        <UsageCount Value="163"/>
+>>>>>>> upstream/master
       </Unit45>
       <Unit46>
         <Filename Value="m_any_to_linuxaarch64.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
         <CursorPos X="19" Y="4"/>
         <UsageCount Value="43"/>
+=======
+        <TopLine Value="77"/>
+        <CursorPos Y="93"/>
+        <UsageCount Value="124"/>
+>>>>>>> upstream/master
       </Unit46>
     </Units>
   </ProjectSession>

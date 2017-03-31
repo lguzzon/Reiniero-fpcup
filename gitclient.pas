@@ -54,16 +54,20 @@ type
   however, we're not writing config changes for users, so
   we don't provide http proxy support for git. }
   protected
-    procedure CheckOut; override;
+    procedure CheckOut(UseForce:boolean=false); override;
+    function GetProxyCommand: string;
     function GetLocalRevision: string; override;
     function GetRepoExecutable: string; override;
     function GetRepoExecutableName: string; override;
+<<<<<<< HEAD
+=======
+    function FindRepoExecutable: string; override;
+>>>>>>> upstream/master
   public
     procedure CheckOutOrUpdate; override;
     function Commit(Message: string): boolean; override;
     function Execute(Command: string): integer; override;
     function GetDiffAll: string; override;
-    function FindRepoExecutable: string; override;
     procedure LocalModifications(var FileList: TStringList); override;
     function LocalRepositoryExists: boolean; override;
     procedure Log(var Log: TStringList); override;
@@ -116,6 +120,12 @@ begin
     FRepoExecutable := GetEnvironmentVariable('ProgramFiles\Git\bin\' + RepoExecutableName + '.exe');
   if not FileExists(FRepoExecutable) then
     FRepoExecutable := GetEnvironmentVariable('ProgramFiles(x86)\Git\bin\' + RepoExecutableName + '.exe');
+<<<<<<< HEAD
+=======
+  if not FileExists(FRepoExecutable) then
+    FRepoExecutable := 'C:\Program Files (x86)\Git\bin\' + RepoExecutableName + '.exe';
+
+>>>>>>> upstream/master
   //Directory where current executable is:
   if not FileExists(FRepoExecutable) then
     FRepoExecutable := (SafeGetApplicationPath  + RepoExecutableName + '.exe');
@@ -161,20 +171,23 @@ begin
     Result := FRepoExecutable;
 end;
 
-procedure TGitClient.CheckOut;
+procedure TGitClient.CheckOut(UseForce:boolean=false);
 // SVN checkout is more or less equivalent to git clone
 const
   MaxRetries = 3;
 var
-  Command: string;
+  Command: string = '';
   Output: string = '';
   RetryAttempt: integer;
+  aBranch: string = '';
+  //TargetFile: string;
 begin
   if NOT ValidClient then exit;
 
   // Invalidate our revision number cache
   FLocalRevision := FRET_UNKNOWN_REVISION;
 
+<<<<<<< HEAD
   //if ExportOnly then
   //begin
   //  Result:=True;
@@ -190,11 +203,49 @@ begin
      then Command := ' checkout-index -a -f --recurse-submodules ' + Repository + ' --prefix=' + IncludeTrailingPathDelimiter(LocalRepository)
      else Command := ' clone --recurse-submodules ' + Repository + ' ' + LocalRepository;
   FReturnCode := ExecuteCommand(DoubleQuoteIfNeeded(FRepoExecutable) + Command, Output, FVerbose);
+=======
+  if DesiredBranch=''
+     then aBranch:='master'
+     else aBranch:=DesiredBranch;
+
+  // Actual clone/checkout
+  if ExportOnly then
+  begin
+    {
+    TargetFile := SysUtils.GetTempFileName;
+    Command := ' archive --format zip --output ' + TargetFile + ' --prefix=/ --remote=' + Repository + ' master';
+    FReturnCode := ExecuteCommand(DoubleQuoteIfNeeded(FRepoExecutable) + Command, FVerbose);
+    FReturnCode := ExecuteCommand(FUnzip+' -o -d '+IncludeTrailingPathDelimiter(InstallDir)+' '+TargetFile,FVerbose);
+    SysUtils.DeleteFile(TargetFile);
+    }
+    if DirectoryExists(IncludeTrailingPathDelimiter(LocalRepository)+'.git') then
+    begin
+      ExecuteCommandInDir(DoubleQuoteIfNeeded(FRepoExecutable) + ' fetch --all',LocalRepository, FVerbose);
+      ExecuteCommandInDir(DoubleQuoteIfNeeded(FRepoExecutable) + ' reset --hard origin/'+aBranch,LocalRepository, FVerbose);
+    end
+    else
+    begin
+      // initial : very shallow clone = fast !!
+      Command := ' clone --recurse-submodules --depth 1 -b ' + aBranch + ' ' + Repository + ' ' + LocalRepository
+    end;
+  end
+  else
+  begin
+    Command := ' clone --recurse-submodules -b ' + aBranch + ' ' +  Repository + ' ' + LocalRepository;
+  end;
+
+  if Command<>'' then
+  begin
+    FReturnCode := ExecuteCommand(DoubleQuoteIfNeeded(FRepoExecutable) + Command, Output, FVerbose)
+  end else FReturnCode := 0;
+>>>>>>> upstream/master
 
   // If command fails, e.g. due to misconfigured firewalls blocking ICMP etc, retry a few times
   RetryAttempt := 1;
   if (FReturnCode <> 0) then
   begin
+    // if we have a proxy, set it now !
+    if Length(GetProxyCommand)>0 then ExecuteCommand(DoubleQuoteIfNeeded(FRepoExecutable) +  GetProxyCommand, Output, FVerbose);
     while (FReturnCode <> 0) and (RetryAttempt < MaxRetries) do
     begin
       Sleep(500); //Give everybody a chance to relax ;)
@@ -365,9 +416,15 @@ begin
   FReturnCode := 0;
   if ExportOnly then exit;
   if NOT ValidClient then exit;
+<<<<<<< HEAD
 
   FileList.Clear;
   if NOT ValidClient then exit;
+=======
+  if NOT DirectoryExists(FLocalRepository) then exit;
+
+  FileList.Clear;
+>>>>>>> upstream/master
   // --porcelain indicate stable output;
   // -z would indicate machine-parsable output but uses ascii 0 to terminate strings, which doesn't match ParseFileList;
   FReturnCode := ExecuteCommandInDir(DoubleQuoteIfNeeded(FRepoExecutable) + ' status --porcelain --untracked-files=no ',
@@ -391,6 +448,10 @@ begin
   FReturnCode := 0;
   if ExportOnly then exit;
   if NOT ValidClient then exit;
+<<<<<<< HEAD
+=======
+  if NOT DirectoryExists(FLocalRepository) then exit;
+>>>>>>> upstream/master
 
   // This will output nothing to stdout and
   // fatal: Not a git repository (or any of the parent directories): .git
@@ -435,6 +496,31 @@ begin
   end;
 end;
 
+
+function TGitClient.GetProxyCommand: string;
+var
+  s:string;
+begin
+  if FHTTPProxyHost<>'' then
+  begin
+    s:=FHTTPProxyHost;
+    if FHTTPProxyPort<>0 then s:=s+':'+inttostr(FHTTPProxyPort);
+    if FHTTPProxyUser<>'' then
+    begin
+      s:='@'+s;
+      if FHTTPProxyPassword<>'' then s:=':'+FHTTPProxyPassword+s;
+      s:=FHTTPProxyUser+s;
+    end;
+    result:=' config --local --add http.proxy http://'+s;
+  end
+  else
+  begin
+    result:='';
+  end;
+end;
+
+
+
 function TGitClient.GetLocalRevision: string;
 var
   Output: string = '';
@@ -443,19 +529,22 @@ begin
   FReturnCode := 0;
   if ExportOnly then exit;
   if NOT ValidClient then exit;
+<<<<<<< HEAD
+=======
+  if NOT DirectoryExists(FLocalRepository) then exit;
+>>>>>>> upstream/master
 
   // Only update if we have invalid revision info, in order to minimize git info calls
   if FLocalRevision = FRET_UNKNOWN_REVISION then
   begin
     //todo: find out: without max-count, I can get multiple entries. No idea what these mean!??
     // alternative command: rev-parse --verify "HEAD^0" but that doesn't look as low-level ;)
-    FReturnCode := ExecuteCommandInDir(DoubleQuoteIfNeeded(FRepoExecutable) + ' rev-list --max-count=1 HEAD ', FLocalRepository, Output, Verbose);
-    if FReturnCode = 0 then
-    begin
-      FLocalRevision := trim(Output);
-    end
-    else
-    begin
+    try
+      FReturnCode := ExecuteCommandInDir(DoubleQuoteIfNeeded(FRepoExecutable) + ' rev-list --max-count=1 HEAD ', FLocalRepository, Output, Verbose);
+      if FReturnCode = 0
+        then FLocalRevision := trim(Output)
+        else FLocalRevision := FRET_UNKNOWN_REVISION; //for compatibility with the svnclient code
+    except
       FLocalRevision := FRET_UNKNOWN_REVISION; //for compatibility with the svnclient code
     end;
   end;

@@ -43,6 +43,10 @@ Temporary Items
 .apdisk
 
 *.ppu
+<<<<<<< HEAD
+=======
+*.lps
+>>>>>>> upstream/master
 *.o
 *.obj
 *.s
@@ -59,5 +63,13 @@ Temporary Items
 
 *.log
 backup/
+<<<<<<< HEAD
+=======
+icons/
+bin/
+crosstools/
+bootstrappers/
+deluxebin/
+>>>>>>> upstream/master
 lib/
 lib*/

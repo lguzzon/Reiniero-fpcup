@@ -49,7 +49,11 @@ These did not work (marked broken) in PC BSD 9 release
 interface
 
 uses
+<<<<<<< HEAD
   Classes, SysUtils, m_crossinstaller,fpcuputil;
+=======
+  Classes, SysUtils, m_crossinstaller;
+>>>>>>> upstream/master
 
 implementation
 type
@@ -59,7 +63,10 @@ type
 TFreeBSD_Linux64 = class(TCrossInstaller)
 private
   FAlreadyWarned: boolean; //did we warn user about errors and fixes already?
+<<<<<<< HEAD
   function TargetSignature: string;
+=======
+>>>>>>> upstream/master
 public
   function GetLibs(Basepath:string):boolean;override;
   {$ifndef FPCONLY}
@@ -71,6 +78,7 @@ public
 end;
 
 { TFreeBSD_Linux64 }
+<<<<<<< HEAD
 function TFreeBSD_Linux64.TargetSignature: string;
 begin
   result:=FTargetCPU+'-'+TargetOS;
@@ -78,13 +86,28 @@ end;
 
 function TFreeBSD_Linux64.GetLibs(Basepath:string): boolean;
 begin
+=======
+
+function TFreeBSD_Linux64.GetLibs(Basepath:string): boolean;
+begin
+  result:=FLibsFound;
+  if result then exit;
+
+>>>>>>> upstream/master
   FLibsPath:='/compat/linux/lib';
   result:=DirectoryExists(FLibsPath);
   if result then
   begin
+<<<<<<< HEAD
     //todo: check if -XR is needed for fpc root dir Prepend <x> to all linker search paths
     FFPCCFGSnippet:=FFPCCFGSnippet+LineEnding+
     '-Fl'+IncludeTrailingPathDelimiter(FLibsPath) {buildfaq 1.6.4/3.3.1:  the directory to look for the target  libraries};
+=======
+    FLibsFound:=true;
+    //todo: check if -XR is needed for fpc root dir Prepend <x> to all linker search paths
+    FFPCCFGSnippet:=FFPCCFGSnippet+LineEnding+
+    '-Fl'+IncludeTrailingPathDelimiter(FLibsPath);// buildfaq 1.6.4/3.3.1:  the directory to look for the target  libraries
+>>>>>>> upstream/master
   end;
 end;
 
@@ -92,7 +115,11 @@ end;
 function TFreeBSD_Linux64.GetLibsLCL(LCL_Platform: string; Basepath: string): boolean;
 begin
   // todo: get gtk at least
+<<<<<<< HEAD
   result:=true;
+=======
+  result:=inherited;
+>>>>>>> upstream/master
 end;
 {$endif}
 
@@ -103,26 +130,46 @@ const
   http://ftp.gnu.org/gnu/binutils/binutils-2.23.1.tar.bz2
   }
 begin
+<<<<<<< HEAD
   inherited;
   //todo: remove once done
   infoln('TFreeBSD_Linux64: Experimental, not finished. Stopping now.', etError);
+=======
+  result:=inherited;
+  if result then exit;
+
+  //todo: remove once done
+  ShowInfo('Experimental, not finished. Stopping now.', etError);
+>>>>>>> upstream/master
   result:=false;
 
   //todo: use conditional compilation for hostcpu, hostos; determine what to do depending on that
   FBinUtilsPrefix:='';
+<<<<<<< HEAD
   FBinUtilsPath:=IncludeTrailingPathDelimiter(BasePath)+'/cross/bin/'+TargetSignature; //these do not contain as etc though
+=======
+  FBinUtilsPath:=IncludeTrailingPathDelimiter(BasePath)+'/cross/bin/'+TargetCPU+'-'+TargetOS; //these do not contain as etc though
+>>>>>>> upstream/master
   if not FileExists(FBinUtilsPath+'/as') then
   begin
     // Check for and get Linux binutils.
     if not(ForceDirectories(FBinUtilsPath)) then
     begin
+<<<<<<< HEAD
       infoln('TFreeBSD_Linux64: Could not create binutils directory '+FBinUtilsPath,etError);
+=======
+      ShowInfo('Could not create binutils directory '+FBinUtilsPath,etError);
+>>>>>>> upstream/master
       FAlreadyWarned:=true;
       exit(false);
     end;
     // Get gnu binutils
     //todo: check for gunzip/tar executable=>installercore checkandget?
+<<<<<<< HEAD
     Download(BinutilsDownloadURL,GetTempDir); //todo: proper temp directory
+=======
+    //Download(BinutilsDownloadURL,GetTempDir); //todo: proper temp directory
+>>>>>>> upstream/master
     //todo: extract tar.gz in place
     {make example for arm
     ./configure --target=arm-linux --disable-werror
@@ -133,6 +180,10 @@ begin
   result:=FileExists(FBinUtilsPath+'/as'); // let the assembler be our coalmine canary
   if result then
   begin
+<<<<<<< HEAD
+=======
+    FBinsFound:=true;
+>>>>>>> upstream/master
     // Configuration snippet for FPC
     FFPCCFGSnippet:=FFPCCFGSnippet+LineEnding+
     '-FD'+IncludeTrailingPathDelimiter(FBinUtilsPath)+LineEnding+ {search this directory for compiler utilities}
@@ -144,7 +195,11 @@ end;
 constructor TFreeBSD_Linux64.Create;
 begin
   inherited Create;
+<<<<<<< HEAD
   FCrossModuleName:='FreeBSD_Linux64';
+=======
+  FCrossModuleNamePrefix:='TFreeBSD';
+>>>>>>> upstream/master
   FBinUtilsPath:='';
   FBinUtilsPrefix:='';
   FFPCCFGSnippet:='';
@@ -152,7 +207,11 @@ begin
   FTargetCPU:='x86_64';
   FTargetOS:='linux';
   FAlreadyWarned:=false;
+<<<<<<< HEAD
   infoln('TFreeBSD_Linux64 crosscompiler loading',etDebug);
+=======
+  ShowInfo;
+>>>>>>> upstream/master
 end;
 
 destructor TFreeBSD_Linux64.Destroy;

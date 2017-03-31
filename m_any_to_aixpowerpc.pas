@@ -47,16 +47,20 @@ powerpc-aix-strip.exe
 interface
 
 uses
-  Classes, SysUtils, m_crossinstaller,fpcuputil,fileutil;
+  Classes, SysUtils, m_crossinstaller, fileutil;
 
 implementation
+
+const
+  ARCH='powerpc';
+  OS='aix';
+
 type
 
 { TAny_AIXPowerPC }
 TAny_AIXPowerPC = class(TCrossInstaller)
 private
   FAlreadyWarned: boolean; //did we warn user about errors and fixes already?
-  function TargetSignature: string;
 public
   function GetLibs(Basepath:string):boolean;override;
   {$ifndef FPCONLY}
@@ -68,26 +72,39 @@ public
 end;
 
 { TAny_AIXPowerPC }
-function TAny_AIXPowerPC.TargetSignature: string;
-begin
-  result:=FTargetCPU+'-'+TargetOS;
-end;
 
 function TAny_AIXPowerPC.GetLibs(Basepath:string): boolean;
 const
+<<<<<<< HEAD
   DirName='powerpc-aix';
+=======
+  DirName=ARCH+'-'+OS;
+>>>>>>> upstream/master
   LibName='libc.so';
 begin
   // begin simple: check presence of library file in basedir
   result:=SearchLibrary(Basepath,LibName);
 
+<<<<<<< HEAD
   // first search local paths based on libbraries provided for or adviced by fpc itself
   if not result then
     result:=SimpleSearchLibrary(BasePath,DirName);
+=======
+  result:=FLibsFound;
+  if result then exit;
+
+  // begin simple: check presence of library file in basedir
+  result:=SearchLibrary(Basepath,LibName);
+
+  // first search local paths based on libbraries provided for or adviced by fpc itself
+  if not result then
+    result:=SimpleSearchLibrary(BasePath,DirName,LibName);
+>>>>>>> upstream/master
 
   SearchLibraryInfo(result);
   if result then
   begin
+    FLibsFound:=true;
     //todo: check if -XR is needed for fpc root dir Prepend <x> to all linker search paths
     //todo: implement -Xr for other platforms if this setup works
     FFPCCFGSnippet:=FFPCCFGSnippet+LineEnding+
@@ -97,7 +114,11 @@ begin
   end
   else
   begin
+<<<<<<< HEAD
     infoln(FCrossModuleName+ ': For simple programs that do not call (C) libraries, this is not necessary. However, you MAY want to copy your /usr/lib from your AIX machine to your cross lib directory.',etInfo);
+=======
+    ShowInfo('For simple programs that do not call (C) libraries, this is not necessary. However, you MAY want to copy your /usr/lib from your AIX machine to your cross lib directory.',etInfo);
+>>>>>>> upstream/master
   end;
   result:=true; //this step is optional at least for simple hello world programs
 end;
@@ -106,18 +127,24 @@ end;
 function TAny_AIXPowerPC.GetLibsLCL(LCL_Platform: string; Basepath: string): boolean;
 begin
   // todo: get gtk at least, add to FFPCCFGSnippet
-  infoln(FCrossModuleName+ ': implement lcl libs path from basepath '+BasePath+' for platform '+LCL_Platform,etdebug);
-  result:=true;
+  ShowInfo('Implement lcl libs path from basepath '+BasePath+' for platform '+LCL_Platform,etdebug);
+  result:=inherited;
 end;
 {$endif}
 
 function TAny_AIXPowerPC.GetBinUtils(Basepath:string): boolean;
 const
-  DirName='powerpc-aix';
+  DirName=ARCH+'-'+OS;
 var
   AsFile: string;
+  BinPrefixTry: string;
 begin
+<<<<<<< HEAD
   inherited;
+=======
+  result:=inherited;
+  if result then exit;
+>>>>>>> upstream/master
 
   // Start with any names user may have given
   AsFile:=FBinUtilsPrefix+'as'+GetExeExt;
@@ -129,16 +156,25 @@ begin
   // Also allow for crossfpc naming
   if not result then
   begin
+<<<<<<< HEAD
     FBinUtilsPrefix:='powerpc-aix-';
     AsFile:=FBinUtilsPrefix+'as'+GetExeExt;
     if not result then
       result:=SearchBinUtil(FBinUtilsPath,AsFile);
     if not result then result:=SimpleSearchBinUtil(BasePath,DirName,AsFile);
+=======
+    BinPrefixTry:=ARCH+'-'+OS+'-';
+    AsFile:=BinPrefixTry+'as'+GetExeExt;
+    result:=SearchBinUtil(BasePath,AsFile);
+    if not result then result:=SimpleSearchBinUtil(BasePath,DirName,AsFile);
+    if result then FBinUtilsPrefix:=BinPrefixTry;
+>>>>>>> upstream/master
   end;
 
   // Also allow for crossbinutils without prefix
   if not result then
   begin
+<<<<<<< HEAD
     FBinUtilsPrefix:='';
     AsFile:=FBinUtilsPrefix+'as'+GetExeExt;
     if not result then
@@ -146,15 +182,30 @@ begin
     if not result then
       result:=SimpleSearchBinUtil(BasePath,DirName,AsFile);
   end;
+=======
+    BinPrefixTry:='';
+    AsFile:=BinPrefixTry+'as'+GetExeExt;
+    result:=SearchBinUtil(BasePath,AsFile);
+    if not result then result:=SimpleSearchBinUtil(BasePath,DirName,AsFile);
+    if result then FBinUtilsPrefix:=BinPrefixTry;
+  end;
+
+  SearchBinUtilsInfo(result);
+>>>>>>> upstream/master
 
   SearchBinUtilsInfo(result);
   if not result then
   begin
+<<<<<<< HEAD
     infoln(FCrossModuleName+ ': suggestion for cross binutils: please check http://wiki.lazarus.freepascal.org/FPC_AIX_Port.',etInfo);
+=======
+    ShowInfo('Suggestion for cross binutils: please check http://wiki.lazarus.freepascal.org/FPC_AIX_Port.',etInfo);
+>>>>>>> upstream/master
     FAlreadyWarned:=true;
   end
   else
   begin
+    FBinsFound:=true;
     // Configuration snippet for FPC
     FFPCCFGSnippet:=FFPCCFGSnippet+LineEnding+
     '-FD'+IncludeTrailingPathDelimiter(FBinUtilsPath)+LineEnding+ {search this directory for compiler utilities}
@@ -165,16 +216,15 @@ end;
 constructor TAny_AIXPowerPC.Create;
 begin
   inherited Create;
-  FCrossModuleName:='Any_AIXPowerPC';
-  FBinUtilsPrefix:='powerpc-aix-'; //crossfpc nomenclature; module will also search for no prefix crossbinutils
+  FTargetCPU:=ARCH;
+  FTargetOS:=OS;
+  FBinUtilsPrefix:=ARCH+'-'+OS+'-';
   FBinUtilsPath:='';
   FCompilerUsed:=ctBootstrap;
   FFPCCFGSnippet:=''; //will be filled in later
   FLibsPath:='';
-  FTargetCPU:='powerpc'; //32 bit powerpc; will run on 64 bit powerpc as well
-  FTargetOS:='aix';
   FAlreadyWarned:=false;
-  infoln(FCrossModuleName+ ': crosscompiler loading',etDebug);
+  ShowInfo;
 end;
 
 destructor TAny_AIXPowerPC.Destroy;

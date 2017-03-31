@@ -41,11 +41,17 @@ Adapt (add) for other setups
 interface
 
 uses
+<<<<<<< HEAD
   Classes, SysUtils, m_crossinstaller,fpcuputil,fileutil;
 
 implementation
 const
   CrossModuleName='Tany_javajvm';
+=======
+  Classes, SysUtils, m_crossinstaller, fileutil, fpcuputil;
+
+implementation
+>>>>>>> upstream/master
 
 type
 
@@ -53,7 +59,10 @@ type
 Tany_javajvm = class(TCrossInstaller)
 private
   FAlreadyWarned: boolean; //did we warn user about errors and fixes already?
+<<<<<<< HEAD
   function TargetSignature: string;
+=======
+>>>>>>> upstream/master
 public
   function GetLibs(Basepath:string):boolean;override;
   {$ifndef FPCONLY}
@@ -65,6 +74,7 @@ public
 end;
 
 { Tany_javajvm }
+<<<<<<< HEAD
 function Tany_javajvm.TargetSignature: string;
 begin
   result:=FTargetCPU+'-'+TargetOS;
@@ -75,27 +85,54 @@ begin
   //FLibsPath:='where is jasmin.jar'
   //for now, jasmin.jar will be downloaded into normal bin-dir !!
   result:=True;
+=======
+
+function Tany_javajvm.GetLibs(Basepath:string): boolean;
+begin
+  result:=FLibsFound;
+  if result then exit;
+
+  //FLibsPath:='where is jasmin.jar'
+  //for now, jasmin.jar will be downloaded into normal bin-dir !!
+  result:=True;
+  FLibsFound:=True;
+>>>>>>> upstream/master
 end;
 
 {$ifndef FPCONLY}
 function Tany_javajvm.GetLibsLCL(LCL_Platform: string; Basepath: string): boolean;
 begin
   // todo: get gtk at least
+<<<<<<< HEAD
   result:=true;
+=======
+  result:=inherited;
+>>>>>>> upstream/master
 end;
 {$endif}
 
 function Tany_javajvm.GetBinUtils(Basepath:string): boolean;
 begin
+<<<<<<< HEAD
   inherited;
   FBinUtilsPath:=ExtractFilePath(Which('java'+GetExeExt));
   result:=True;
+=======
+  result:=inherited;
+  if result then exit;
+  FBinUtilsPath:=ExtractFilePath(Which('java'+GetExeExt));
+  result:=True;
+  FBinsFound:=true;
+>>>>>>> upstream/master
 end;
 
 constructor Tany_javajvm.Create;
 begin
   inherited Create;
+<<<<<<< HEAD
   FCrossModuleName:='any_javajvm';
+=======
+>>>>>>> upstream/master
   FBinUtilsPrefix:='';
   FBinUtilsPath:='';
   FFPCCFGSnippet:='';
@@ -103,7 +140,11 @@ begin
   FTargetCPU:='jvm';
   FTargetOS:='java';
   FAlreadyWarned:=false;
+<<<<<<< HEAD
   infoln('Tany_javajvm crosscompiler loading',etDebug);
+=======
+  ShowInfo;
+>>>>>>> upstream/master
 end;
 
 destructor Tany_javajvm.Destroy;

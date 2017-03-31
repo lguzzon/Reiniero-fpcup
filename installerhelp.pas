@@ -196,6 +196,8 @@ public
   function CleanModule(ModuleName:string): boolean; override;
   // Configure Lazarus to use the help
   function ConfigModule(ModuleName:string): boolean; override;
+  // Install update sources
+  function GetModule(ModuleName:string): boolean; override;
   // Root directory of FPC; needed for finding fpdoc tool
   property FPCDirectory: string write FFPCDirectory;
   // Configuration for Lazarus; required for configuration
@@ -228,7 +230,8 @@ var
   BinPath: string; //path where compiler is
   PlainBinPath: string; //the directory above e.g. c:\development\fpc\bin\i386-win32
 begin
-  result:=CheckAndGetNeededExecutables;
+  result:=(CheckAndGetNeededExecutables) AND (CheckAndGetNeededBinUtils);
+
   if result then
   begin
     // Look for make etc in the current compiler directory:
@@ -244,12 +247,17 @@ begin
       PlainBinPath+PathSeparator+
       FMakeDir+PathSeparator+
       FSVNDirectory+PathSeparator+
-      FBaseDirectory,false,false);
+      FInstallDirectory,false,false);
     {$ENDIF MSWINDOWS}
     {$IFDEF UNIX}
     SetPath(BinPath+PathSeparator+
-    PlainBinPath,
-    true,false);
+    {$IFDEF DARWIN}
+    // pwd is located in /bin ... the makefile needs it !!
+    // tools are located in /usr/bin ... the makefile needs it !!
+    // don't ask, but this is needed when fpcupdeluxe runs out of an .app package ... quirk solved this way .. ;-)
+    '/bin'+PathSeparator+'/usr/bin'+PathSeparator+
+    {$ENDIF}
+    PlainBinPath,true,false);
     {$ENDIF UNIX}
   end;
 end;
@@ -288,6 +296,7 @@ const
   // that includes the lcl file
   // Snapshot alternative... that changes name... and is a .tar.bz2
   // ftp://freepascal.dfmk.hu/pub/lazarus/snapshots/fpc-lazarus-doc-chm-20120622.tar.bz2
+<<<<<<< HEAD
   //Laz 1.0 version
   //FPC_CHM_URL='http://sourceforge.net/projects/lazarus/files/Lazarus%20Documentation/Lazarus%201.0/fpc-lazarus-doc-chm-1.0.zip/download';
   //FPC_CHM_URL='http://sourceforge.net/projects/lazarus/files/Lazarus%20Documentation/Lazarus%201.0.12/fpc-lazarus-doc-chm-1.0.12.zip/download';
@@ -297,6 +306,13 @@ const
   // FPC_CHM_URL='http://sourceforge.net/projects/lazarus/files/Lazarus%20Documentation/Lazarus%201.4/doc-chm_fpc2014_laz2015.zip/download';
   // Laz 1.6 version:
   //FPC_CHM_URL='http://sourceforge.net/projects/lazarus/files/Lazarus%20Documentation/Lazarus%201.6/doc-chm-fpc3.0.0-laz1.6.zip/download';
+=======
+  // Laz 1.2 version:
+  FPC_CHM_URL_1_2='https://sourceforge.net/projects/lazarus/files/Lazarus%20Documentation/Lazarus%201.2/fpc-lazarus-doc-chm-1.2.zip/download';
+  // Laz 1.4 version:
+  FPC_CHM_URL_1_4='https://sourceforge.net/projects/lazarus/files/Lazarus%20Documentation/Lazarus%201.4/doc-chm_fpc2014_laz2015.zip/download';
+  // Laz 1.6 version:
+>>>>>>> upstream/master
   FPC_CHM_URL='https://sourceforge.net/projects/lazarus/files/Lazarus%20Documentation/Lazarus%201.6/doc-chm-fpc3.0.0-laz1.6.zip/download';
   FPC_CHM_URL_LASTRESORT='http://mirrors.iwi.me/lazarus/releases/Lazarus%20Documentation/Lazarus%201.6/doc-chm-fpc3.0.0-laz1.6.zip';
 
@@ -304,6 +320,7 @@ var
   DocsZip: string;
   OperationSucceeded: boolean;
   ResultCode: longint;
+  HelpUrl:string;
 begin
   result:=InitModule;
   if not result then exit;
@@ -316,6 +333,17 @@ begin
   end
   else
   begin
+
+    // default to latest help avalable
+    HelpUrl:=FPC_CHM_URL;
+
+    // check if an older version of help is needed
+    if FMajorVersion=1 then
+    begin
+      if FMinorVersion=2 then HelpUrl:=FPC_CHM_URL_1_2;
+      if FMinorVersion=4 then HelpUrl:=FPC_CHM_URL_1_4;
+    end;
+
     // Download FPC CHM docs zip into TargetDirectory.
     {Possible alternatives
     1. make chm -> requires latex!!!
@@ -330,13 +358,17 @@ begin
     OperationSucceeded:=true;
 
     try
-      OperationSucceeded:=Download(FPC_CHM_URL,DocsZip);
+      OperationSucceeded:=Download(FUseWget, HelpUrl, DocsZip);
     except
       on E: Exception do
       begin
         // Deal with timeouts, wrong URLs etc
         OperationSucceeded:=false;
+<<<<<<< HEAD
         infoln(ModuleName+': Download documents failed. URL: '+FPC_CHM_URL+LineEnding+
+=======
+        infoln(ModuleName+': Download documents failed. URL: '+HelpUrl+LineEnding+
+>>>>>>> upstream/master
           'Exception: '+E.ClassName+'/'+E.Message, etWarning);
       end;
     end;
@@ -345,13 +377,21 @@ begin
     begin
       // try a second time
       try
+<<<<<<< HEAD
         OperationSucceeded:=Download(FPC_CHM_URL,DocsZip);
+=======
+        OperationSucceeded:=Download(FUseWget, HelpUrl, DocsZip);
+>>>>>>> upstream/master
       except
         on E: Exception do
         begin
           // Deal with timeouts, wrong URLs etc
           OperationSucceeded:=false;
+<<<<<<< HEAD
           infoln(ModuleName+': Download documents failed. URL: '+FPC_CHM_URL+LineEnding+
+=======
+          infoln(ModuleName+': Download documents failed. URL: '+HelpUrl+LineEnding+
+>>>>>>> upstream/master
             'Exception: '+E.ClassName+'/'+E.Message, etWarning);
         end;
       end;
@@ -378,17 +418,44 @@ begin
       DocsZip := SysUtils.GetTempFileName + '.zip';
 
       try
+<<<<<<< HEAD
         OperationSucceeded:=Download(FPC_CHM_URL_LASTRESORT,DocsZip);
+=======
+        OperationSucceeded:=Download(FUseWget, FPC_CHM_URL, DocsZip);
+>>>>>>> upstream/master
       except
         on E: Exception do
         begin
           // Deal with timeouts, wrong URLs etc
           OperationSucceeded:=false;
+<<<<<<< HEAD
           infoln(ModuleName+': Download documents failed. URL: '+FPC_CHM_URL_LASTRESORT+LineEnding+
+=======
+          infoln(ModuleName+': Download documents failed. URL: '+FPC_CHM_URL+LineEnding+
+>>>>>>> upstream/master
             'Exception: '+E.ClassName+'/'+E.Message, etWarning);
         end;
       end;
 
+<<<<<<< HEAD
+=======
+      if NOT OperationSucceeded then
+      begin
+        // try a second time
+        try
+          OperationSucceeded:=Download(FUseWget, FPC_CHM_URL_LASTRESORT, DocsZip);
+        except
+          on E: Exception do
+          begin
+            // Deal with timeouts, wrong URLs etc
+            OperationSucceeded:=false;
+            infoln(ModuleName+': Download documents failed. URL: '+FPC_CHM_URL_LASTRESORT+LineEnding+
+              'Exception: '+E.ClassName+'/'+E.Message, etWarning);
+          end;
+        end;
+      end;
+
+>>>>>>> upstream/master
       if OperationSucceeded then
       begin
         // Extract, overwrite, flatten path/junk paths
@@ -444,7 +511,11 @@ begin
   if inherited InitModule then
   begin
     //todo: check with FreeVision FPCIDE to see if this is a sensible location.
+<<<<<<< HEAD
     FTargetDirectory:=IncludeTrailingPathDelimiter(FBaseDirectory)+
+=======
+    FTargetDirectory:=IncludeTrailingPathDelimiter(FInstallDirectory)+
+>>>>>>> upstream/master
       'doc'+DirectorySeparator+
       'ide'+DirectorySeparator; ;
     infoln('Module FPCHELP: documentation directory: '+FTargetDirectory,etInfo);
@@ -562,7 +633,11 @@ begin
       (LazFileUtils.FileIsReadOnlyUTF8(ExistingLCLHelp)=false)
       and
       ((DaysBetween(Now,LCLDate)>7)
+<<<<<<< HEAD
       or (FileSizeUTF8(ExistingLCLHelp)=0))
+=======
+      or (FileSize(ExistingLCLHelp)=0))
+>>>>>>> upstream/master
       )
       then
     begin
@@ -575,7 +650,7 @@ begin
           // Check for valid lazbuild.
           // Note: we don't check if we have a valid primary config path, but that will come out
           // in the next steps.
-          LazbuildExe:=IncludeTrailingPathDelimiter(FBaseDirectory) + 'lazbuild'+GetExeExt;;
+          LazbuildExe:=IncludeTrailingPathDelimiter(FInstallDirectory) + 'lazbuild'+GetExeExt;;
           if CheckExecutable(LazbuildExe, '--help','lazbuild')=false then
           begin
             writelnlog(ModuleName+': No valid lazbuild executable found. Aborting.', true);
@@ -726,11 +801,11 @@ begin
   begin
     // This must be the directory of the build_lcl_docs project, otherwise
     // build_lcl_docs will fail; at least it won't pick up the FPC help files for cross references
-    FTargetDirectory:=IncludeTrailingPathDelimiter(FBaseDirectory)+
+    FTargetDirectory:=IncludeTrailingPathDelimiter(FInstallDirectory)+
       'docs'+DirectorySeparator+
       'chm'+DirectorySeparator;
     infoln('helplazarus: documentation directory: '+FTargetDirectory,etInfo);
-    FBuildLCLDocsExeDirectory:=IncludeTrailingPathDelimiter(FBaseDirectory)+
+    FBuildLCLDocsExeDirectory:=IncludeTrailingPathDelimiter(FInstallDirectory)+
       'docs'+DirectorySeparator+
       'html'+DirectorySeparator;
     infoln('helplazarus: FBuildLCLDocsExeDirectory: '+FTargetDirectory,etDebug);
@@ -828,6 +903,62 @@ begin
   // Removing config not needed anymore since we use the default
 end;
 
+<<<<<<< HEAD
+=======
+function THelpLazarusInstaller.GetModule(ModuleName: string): boolean;
+var
+  LazarusConfig: TUpdateLazConfig;
+  LazVersion:string;
+  VersionList:TStringList;
+begin
+  // get Lazarus version for correct version of helpfile
+  LazarusConfig:=TUpdateLazConfig.Create(LazarusPrimaryConfigPath);
+  try
+    try
+      LazVersion:=LazarusConfig.GetVariable(EnvironmentConfig,'EnvironmentOptions/Version/Lazarus');
+      writeln(LazVersion);
+      LazVersion:=StringReplace(LazVersion,'.',',',[rfReplaceAll]);
+      VersionList := TStringList.Create;
+      try
+        VersionList.CommaText := LazVersion;
+        case VersionList.Count of
+          1:
+          begin
+            FMajorVersion := StrToIntDef(VersionList[0], -1);
+            //FMinorVersion := 0;
+            //FReleaseVersion := 0;
+          end;
+          2:
+          begin
+            FMajorVersion := StrToIntDef(VersionList[0], -1);
+            FMinorVersion := StrToIntDef(VersionList[1], -1);
+            //FReleaseVersion := 0;
+          end;
+          3..maxint:
+          begin
+            FMajorVersion := StrToIntDef(VersionList[0], -1);
+            FMinorVersion := StrToIntDef(VersionList[1], -1);
+            FReleaseVersion := StrToIntDef(VersionList[2], -1);
+          end;
+        end;
+      finally
+        VersionList.Free;
+      end;
+    except
+      on E: Exception do
+      begin
+        writelnlog('Lazarus help: Error getting Lazarus version config: '+E.ClassName+'/'+E.Message, true);
+      end;
+    end;
+  finally
+    LazarusConfig.Free;
+  end;
+
+  Result:=inherited GetModule(ModuleName);
+end;
+
+
+>>>>>>> upstream/master
 constructor THelpLazarusInstaller.Create;
 begin
   inherited Create;

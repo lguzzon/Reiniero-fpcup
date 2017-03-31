@@ -33,7 +33,11 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 interface
 
 uses
+<<<<<<< HEAD
   Classes, SysUtils, m_crossinstaller,fpcuputil;
+=======
+  Classes, SysUtils, m_crossinstaller;
+>>>>>>> upstream/master
 
 implementation
 type
@@ -45,9 +49,12 @@ private
 
 public
   function GetLibs(Basepath:string):boolean;override;
+<<<<<<< HEAD
   {$ifndef FPCONLY}
   function GetLibsLCL(LCL_Platform:string; Basepath:string):boolean;override;
   {$endif}
+=======
+>>>>>>> upstream/master
   function GetBinUtils(Basepath:string):boolean;override;
   constructor Create;
   destructor Destroy; override;
@@ -57,10 +64,14 @@ end;
 
 function TWin64.GetLibs(Basepath:string): boolean;
 begin
+  result:=FLibsFound;
+  if result then exit;
   FLibsPath:='';
   result:=true;
+  FLibsFound:=true;
 end;
 
+<<<<<<< HEAD
 {$ifndef FPCONLY}
 function TWin64.GetLibsLCL(LCL_Platform: string; Basepath: string): boolean;
 begin
@@ -68,22 +79,26 @@ begin
 end;
 {$endif}
 
+=======
+>>>>>>> upstream/master
 function TWin64.GetBinUtils(Basepath:string): boolean;
 begin
-  inherited;
+  result:=inherited;
+  if result then exit;
   FBinUtilsPath:='';
   FBinUtilsPrefix:='';  
   result:=true;
+  FBinsFound:=true;
 end;
 
 constructor TWin64.Create;
 begin
   inherited Create;
-  FCrossModuleName:='Win64';
+  FCrossModuleNamePrefix:='TWin32';
   FTargetCPU:='x86_64';
   FTargetOS:='win64';
   FFPCCFGSnippet:=''; //no need to change fpc.cfg
-  infoln('TWin64 crosscompiler loading',etDebug);
+  ShowInfo;
 end;
 
 destructor TWin64.Destroy;

@@ -2,18 +2,30 @@
 <CONFIG>
   <ProjectSession>
     <PathDelim Value="\"/>
+<<<<<<< HEAD
     <Version Value="9"/>
     <BuildModes Count="3" Active="Default">
+=======
+    <Version Value="10"/>
+    <BuildModes Count="3" Active="win32">
+>>>>>>> upstream/master
       <Item1 Name="linuxarmhf">
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
+<<<<<<< HEAD
             <Filename Value="bin\$(TargetCPU)-$(TargetOS)\fpcup_linux_armhf"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
             <Libraries Value="C:\development\cross\lib\arm-linux-pi\"/>
+=======
+            <Filename Value="bin\$NameOnly($(ProjFile))-$(TargetCPU)-$(TargetOS)"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+>>>>>>> upstream/master
             <OtherUnitFiles Value="synaser"/>
             <UnitOutputDirectory Value="libfpcup\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
@@ -48,12 +60,20 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
+<<<<<<< HEAD
             <Filename Value="bin\$(TargetCPU)-$(TargetOS)\fpcup_osx_x86"/>
+=======
+            <Filename Value="bin\$NameOnly($(ProjFile))-$(TargetCPU)-$(TargetOS)"/>
+>>>>>>> upstream/master
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
             <OtherUnitFiles Value="synaser"/>
+<<<<<<< HEAD
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+=======
+            <UnitOutputDirectory Value="libfpcup\$(TargetCPU)-$(TargetOS)"/>
+>>>>>>> upstream/master
           </SearchPaths>
           <Conditionals Value="if TargetOS = 'darwin' then begin
   UsageCustomOptions += ' -k-macosx_version_min -k10.6';
@@ -61,6 +81,10 @@
 end;"/>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
+<<<<<<< HEAD
+=======
+            <TargetCPU Value="i386"/>
+>>>>>>> upstream/master
             <TargetOS Value="darwin"/>
             <Optimizations>
               <OptimizationLevel Value="2"/>
@@ -88,12 +112,20 @@ end;"/>
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
+<<<<<<< HEAD
             <Filename Value="bin\$(TargetCPU)-$(TargetOS)\fpcup_osx_x64"/>
+=======
+            <Filename Value="bin\$NameOnly($(ProjFile))-$(TargetCPU)-$(TargetOS)"/>
+>>>>>>> upstream/master
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
             <OtherUnitFiles Value="synaser"/>
+<<<<<<< HEAD
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+=======
+            <UnitOutputDirectory Value="libfpcup\$(TargetCPU)-$(TargetOS)"/>
+>>>>>>> upstream/master
           </SearchPaths>
           <Conditionals Value="if TargetOS = 'darwin' then begin
   UsageCustomOptions += ' -k-macosx_version_min -k10.6';
@@ -137,8 +169,11 @@ end;"/>
         <Filename Value="svnclient.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
         <TopLine Value="223"/>
         <CursorPos X="40" Y="242"/>
+=======
+>>>>>>> upstream/master
         <UsageCount Value="200"/>
       </Unit1>
       <Unit2>
@@ -151,6 +186,11 @@ end;"/>
         <Filename Value="processutils.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
+=======
+        <TopLine Value="448"/>
+        <CursorPos X="25" Y="457"/>
+>>>>>>> upstream/master
         <UsageCount Value="200"/>
       </Unit3>
       <Unit4>
@@ -164,15 +204,25 @@ end;"/>
         <Filename Value="installerfpc.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="installerFpc"/>
+<<<<<<< HEAD
         <EditorIndex Value="3"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
+=======
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="200"/>
+>>>>>>> upstream/master
       </Unit5>
       <Unit6>
         <Filename Value="installerlazarus.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="installerLazarus"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
+=======
+        <TopLine Value="716"/>
+        <CursorPos X="11" Y="728"/>
+>>>>>>> upstream/master
         <UsageCount Value="200"/>
       </Unit6>
       <Unit7>
@@ -180,8 +230,11 @@ end;"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="installerHelp"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
         <TopLine Value="415"/>
         <CursorPos X="10" Y="433"/>
+=======
+>>>>>>> upstream/master
         <UsageCount Value="200"/>
       </Unit7>
       <Unit8>
@@ -210,8 +263,11 @@ end;"/>
         <Filename Value="fpcuputil.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
         <TopLine Value="980"/>
         <CursorPos X="15" Y="984"/>
+=======
+>>>>>>> upstream/master
         <UsageCount Value="200"/>
       </Unit11>
       <Unit12>
@@ -250,8 +306,13 @@ end;"/>
         <Filename Value="repoclient.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
         <TopLine Value="164"/>
         <CursorPos X="39" Y="190"/>
+=======
+        <TopLine Value="120"/>
+        <CursorPos X="13" Y="145"/>
+>>>>>>> upstream/master
         <UsageCount Value="200"/>
       </Unit17>
       <Unit18>
@@ -306,8 +367,13 @@ end;"/>
         <Filename Value="m_crossinstaller.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
         <TopLine Value="163"/>
         <CursorPos X="17" Y="189"/>
+=======
+        <TopLine Value="264"/>
+        <CursorPos Y="275"/>
+>>>>>>> upstream/master
         <UsageCount Value="200"/>
       </Unit24>
       <Unit25>
@@ -419,16 +485,26 @@ end;"/>
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
+<<<<<<< HEAD
         <UsageCount Value="86"/>
+=======
+        <UsageCount Value="134"/>
+>>>>>>> upstream/master
       </Unit39>
       <Unit40>
         <Filename Value="jedi.inc"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
         <UsageCount Value="86"/>
+=======
+        <TopLine Value="68"/>
+        <CursorPos X="8" Y="88"/>
+        <UsageCount Value="134"/>
+>>>>>>> upstream/master
       </Unit40>
       <Unit41>
         <Filename Value="m_linux386_to_mipsel.pas"/>
@@ -436,7 +512,11 @@ end;"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="107"/>
         <CursorPos Y="132"/>
+<<<<<<< HEAD
         <UsageCount Value="86"/>
+=======
+        <UsageCount Value="134"/>
+>>>>>>> upstream/master
       </Unit41>
       <Unit42>
         <Filename Value="revision.inc"/>
@@ -445,7 +525,11 @@ end;"/>
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
+<<<<<<< HEAD
         <UsageCount Value="86"/>
+=======
+        <UsageCount Value="134"/>
+>>>>>>> upstream/master
       </Unit42>
       <Unit43>
         <Filename Value="m_any_to_linuxarm.pas"/>
@@ -453,19 +537,31 @@ end;"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="65"/>
         <CursorPos X="19" Y="81"/>
+<<<<<<< HEAD
         <UsageCount Value="79"/>
+=======
+        <UsageCount Value="127"/>
+>>>>>>> upstream/master
       </Unit43>
       <Unit44>
         <Filename Value="m_any_to_androidjvm.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
         <UsageCount Value="43"/>
+=======
+        <UsageCount Value="91"/>
+>>>>>>> upstream/master
       </Unit44>
       <Unit45>
         <Filename Value="m_any_to_javajvm.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
+<<<<<<< HEAD
         <UsageCount Value="43"/>
+=======
+        <UsageCount Value="91"/>
+>>>>>>> upstream/master
       </Unit45>
     </Units>
   </ProjectSession>

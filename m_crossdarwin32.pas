@@ -9,12 +9,18 @@ unit m_crossdarwin32;
 interface
 
 uses
+<<<<<<< HEAD
   Classes, SysUtils, m_crossinstaller, fpcuputil;
 
 implementation
 const
   ErrorNotFound='An error occurred getting cross compiling binutils/libraries.'+LineEnding+
     'todo: specify what exactly is missing';
+=======
+  Classes, SysUtils, m_crossinstaller;
+
+implementation
+>>>>>>> upstream/master
 
 type
 
@@ -25,9 +31,12 @@ private
   FAlreadyWarned: boolean; //did we warn user about errors and fixes already?
 public
   function GetLibs(Basepath:string):boolean;override;
+<<<<<<< HEAD
   {$ifndef FPCONLY}
   function GetLibsLCL(LCL_Platform:string; Basepath:string):boolean;override;
   {$endif}
+=======
+>>>>>>> upstream/master
   function GetBinUtils(Basepath:string):boolean;override;
   constructor Create;
   destructor Destroy; override;
@@ -37,6 +46,7 @@ end;
 
 function TDarwin32.GetLibs(Basepath:string): boolean;
 begin
+<<<<<<< HEAD
   FLibsPath:='';
   result:=true;
   if (result=false) and (FAlreadyWarned=false) then
@@ -64,17 +74,42 @@ begin
     infoln(ErrorNotFound,etError);
     FAlreadyWarned:=true;
   end;
+=======
+  result:=FLibsFound;
+  if result then exit;
+  FLibsPath:='';
+  result:=true;
+  FLibsFound:=true;
+end;
+
+function TDarwin32.GetBinUtils(Basepath:string): boolean;
+begin
+  result:=inherited;
+  if result then exit;
+  FBinUtilsPath:='';
+  FBinUtilsPrefix:=''; // we have the "native" names, no prefix
+  result:=true;
+  FBinsFound:=true;
+>>>>>>> upstream/master
 end;
 
 constructor TDarwin32.Create;
 begin
   inherited Create;
+<<<<<<< HEAD
   FCrossModuleName:='Darwin32';
+=======
+  FCrossModuleNamePrefix:='TDarwin64';
+>>>>>>> upstream/master
   FTargetCPU:='i386';
   FTargetOS:='darwin';
   FAlreadyWarned:=false;
   FFPCCFGSnippet:=''; //no need to change fpc.cfg
+<<<<<<< HEAD
   infoln('TDarwin32 crosscompiler loading',etDebug);
+=======
+  ShowInfo;
+>>>>>>> upstream/master
 end;
 
 destructor TDarwin32.Destroy;

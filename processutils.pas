@@ -148,12 +148,23 @@ function ExecuteCommand(Commandline: string; Verbose:boolean): integer; overload
 // Runs command, returns result code. Negative codes are processutils internal error codes
 function ExecuteCommand(Commandline: string; var Output:string; Verbose:boolean): integer; overload;
 // Runs command, returns result code. Negative codes are processutils internal error codes
+<<<<<<< HEAD
+=======
+function ExecuteCommand(Commandline: string; Output : TStream; Verbose:boolean): integer; overload;
+// Runs command, returns result code. Negative codes are processutils internal error codes
+>>>>>>> upstream/master
 function ExecuteCommandInDir(Commandline, Directory: string; Verbose:boolean): integer; overload;
 // Runs command, returns result code. Negative codes are processutils internal error codes
 function ExecuteCommandInDir(Commandline, Directory: string; var Output:string; Verbose:boolean): integer; overload;
 // Runs command, returns result code. Negative codes are processutils internal error codes
 // PrependPath is prepended to existing path. If empty, keep current path
+<<<<<<< HEAD
 function ExecuteCommandInDir(Commandline, Directory: string; var Output:string; Verbose:boolean; PrependPath: string): integer; overload;
+=======
+function ExecuteCommandInDir(Commandline, Directory: string; var Output:string; PrependPath: string; Verbose:boolean): integer; overload;
+// Don't process comamndline
+function ExecutePlainCommand(Commandline: string; var Output: string; Verbose: boolean): integer;
+>>>>>>> upstream/master
 // Writes output to console
 procedure DumpConsole(Sender:TProcessEx; output:string);
 
@@ -161,6 +172,14 @@ procedure DumpConsole(Sender:TProcessEx; output:string);
 
 implementation
 
+<<<<<<< HEAD
+=======
+{$ifdef LCL}
+uses
+  Forms,Controls;
+{$endif}
+
+>>>>>>> upstream/master
 { TProcessEx }
 
 function TProcessEx.GetOutputString: string;
@@ -231,6 +250,7 @@ begin
 end;
 
 procedure TProcessEx.Execute;
+<<<<<<< HEAD
 
   function ReadOutput: boolean;
 
@@ -252,6 +272,31 @@ procedure TProcessEx.Execute;
       Result := True;
     end;
   end;
+=======
+{$ifdef LCL}
+var
+  i:integer;
+{$endif}
+function ReadOutput: boolean;
+const
+  BufSize = 4096;
+var
+  Buffer: array[0..BufSize - 1] of byte;
+  ReadBytes: integer;
+begin
+  Result := False;
+  while Output.NumBytesAvailable > 0 do
+  begin
+    ReadBytes := {%H-}Output.Read(Buffer, BufSize);
+    FOutStream.Write(Buffer, ReadBytes);
+    if Assigned(FOnOutput) then
+      FOnOutput(Self,copy(pchar(@buffer[0]),1,ReadBytes));
+    if Assigned(FOnOutputM) then
+      FOnOutputM(Self,copy(pchar(@buffer[0]),1,ReadBytes));
+    Result := True;
+  end;
+end;
+>>>>>>> upstream/master
 
 begin
   try
@@ -287,12 +332,36 @@ begin
           exit;
         end;
       end;
+<<<<<<< HEAD
+=======
+      {$ifdef LCL}
+      i:=0;
+      {$endif}
+>>>>>>> upstream/master
       inherited Execute;
       while Running do
       begin
         if not ReadOutput then
+<<<<<<< HEAD
           Sleep(50);
       end;
+=======
+        begin
+          {$ifdef LCL}
+          Application.ProcessMessages;
+          Sleep(10);
+          // set cursor after 1 second of execution time
+          if (i<100) then Inc(i);
+          if (i=99) then Application.MainForm.Cursor:=crHourGlass;
+          {$else}
+          Sleep(100);
+          {$endif}
+        end;
+      end;
+      {$ifdef LCL}
+      Application.MainForm.Cursor:=crDefault;
+      {$endif}
+>>>>>>> upstream/master
       ReadOutput;
 
       FExitStatus:=inherited ExitStatus;
@@ -324,6 +393,12 @@ end;
 constructor TProcessEx.Create(AOwner : TComponent);
 begin
   inherited;
+<<<<<<< HEAD
+=======
+  {$ifdef LCL}
+  Self.ShowWindow:=swoHIDE;
+  {$endif}
+>>>>>>> upstream/master
   FExceptionInfoStrings:= TstringList.Create;
   FOutputStrings:= TstringList.Create;
   FOutStream := TMemoryStream.Create;
@@ -359,6 +434,15 @@ var
   end;
 
 begin
+<<<<<<< HEAD
+=======
+  if (Length(VarName)=0) then
+  begin
+    result:=-1;
+  end
+  else
+  begin
+>>>>>>> upstream/master
   if not FCaseSensitive then
     VarName:=UpperCase(VarName);
   idx:=0;
@@ -373,6 +457,10 @@ begin
   else
     result:=-1;
 end;
+<<<<<<< HEAD
+=======
+end;
+>>>>>>> upstream/master
 
 function TProcessEnvironment.GetVar(VarName: string): string;
 var
@@ -391,7 +479,11 @@ var
 
 begin
   idx:=GetVarIndex(VarName);
+<<<<<<< HEAD
   if idx>0 then
+=======
+  if idx>=0 then
+>>>>>>> upstream/master
     result:=ExtractVal(FEnvironmentList[idx])
   else
     result:='';
@@ -402,9 +494,16 @@ var
   idx:integer;
   s:string;
 begin
+<<<<<<< HEAD
   idx:=GetVarIndex(VarName);
   s:=trim(Varname)+'='+trim(VarValue);
   if idx>0 then
+=======
+  if (Length(VarName)=0) OR (Length(VarValue)=0) then exit;
+  idx:=GetVarIndex(VarName);
+  s:=trim(Varname)+'='+trim(VarValue);
+  if idx>=0 then
+>>>>>>> upstream/master
     FEnvironmentList[idx]:=s
   else
     FEnvironmentList.Add(s);
@@ -449,6 +548,17 @@ begin
   Result:=ExecuteCommandInDir(Commandline,'',Output,Verbose);
 end;
 
+<<<<<<< HEAD
+=======
+function ExecuteCommand(Commandline: string; Output : TStream;
+  Verbose: boolean): integer;
+begin
+  // to be done
+  //Result:=ExecuteCommandInDir(Commandline,'',Output,Verbose);
+end;
+
+
+>>>>>>> upstream/master
 function ExecuteCommandInDir(Commandline, Directory: string; Verbose: boolean
   ): integer;
 var
@@ -460,11 +570,19 @@ end;
 function ExecuteCommandInDir(Commandline, Directory: string;
   var Output: string; Verbose: boolean): integer;
 begin
+<<<<<<< HEAD
   Result:=ExecuteCommandInDir(CommandLine,Directory,Output,Verbose,'');
 end;
 
 function ExecuteCommandInDir(Commandline, Directory: string;
   var Output: string; Verbose: boolean; PrependPath: string): integer;
+=======
+  Result:=ExecuteCommandInDir(CommandLine,Directory,Output,'',Verbose);
+end;
+
+function ExecuteCommandInDir(Commandline, Directory: string;
+  var Output: string; PrependPath: string; Verbose: boolean): integer;
+>>>>>>> upstream/master
 var
   OldPath: string;
   PE:TProcessEx;
@@ -551,5 +669,34 @@ begin
   end;
 end;
 
+<<<<<<< HEAD
+=======
+function ExecutePlainCommand(Commandline: string; var Output: string; Verbose: boolean): integer;
+var
+  PE:TProcessEx;
+  s:string;
+begin
+  PE:=TProcessEx.Create(nil);
+  try
+    PE.CommandLine:=Commandline;
+    PE.ShowWindow := swoHIDE;
+    if Verbose then
+      PE.OnOutput:=@DumpConsole;
+    {$IFDEF DEBUGCONSOLE}
+    writeln('ExecuteCommandInDir: executable '+PE.Executable);
+    writeln('ExecuteCommandInDir: params     '+PE.Parameters.Text);
+    {$ENDIF DEBUGCONSOLE}
+    PE.Execute;
+    Output:=PE.OutputString;
+    Result:=PE.ExitStatus;
+    {$IFDEF DEBUGCONSOLE}
+    writeln('ExecuteCommandInDir: exit status: '+inttostr(Result));
+    {$ENDIF DEBUGCONSOLE}
+  finally
+    PE.Free;
+  end;
+end;
+
+>>>>>>> upstream/master
 end.
 

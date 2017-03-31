@@ -34,11 +34,17 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 interface
 
 uses
+<<<<<<< HEAD
   Classes, SysUtils, m_crossinstaller,fpcuputil,fileutil;
 
 implementation
 const
   CrossModuleName='Tany_linuxaarch64';
+=======
+  Classes, SysUtils, m_crossinstaller, fileutil;
+
+implementation
+>>>>>>> upstream/master
 
 type
 
@@ -46,7 +52,10 @@ type
 Tany_linuxaarch64 = class(TCrossInstaller)
 private
   FAlreadyWarned: boolean; //did we warn user about errors and fixes already?
+<<<<<<< HEAD
   function TargetSignature: string;
+=======
+>>>>>>> upstream/master
 public
   function GetLibs(Basepath:string):boolean;override;
   {$ifndef FPCONLY}
@@ -58,22 +67,35 @@ public
 end;
 
 { Tany_linuxaarch64 }
+<<<<<<< HEAD
 function Tany_linuxaarch64.TargetSignature: string;
 begin
   result:=FTargetCPU+'-'+TargetOS;
 end;
+=======
+>>>>>>> upstream/master
 
 function Tany_linuxaarch64.GetLibs(Basepath:string): boolean;
 const
   DirName='aarch64-linux';
   LibName='libc.so';
 begin
+<<<<<<< HEAD
+=======
+  result:=FLibsFound;
+  if result then exit;
+
+>>>>>>> upstream/master
   // begin simple: check presence of library file in basedir
   result:=SearchLibrary(Basepath,LibName);
 
   // first search local paths based on libbraries provided for or adviced by fpc itself
   if not result then
+<<<<<<< HEAD
     result:=SimpleSearchLibrary(BasePath,DirName);
+=======
+    result:=SimpleSearchLibrary(BasePath,DirName,LibName);
+>>>>>>> upstream/master
 
   if not result then
   begin
@@ -81,13 +103,21 @@ begin
     FLibsPath:='/usr/lib/aarch64-linux-gnu'; //debian Jessie+ convention
     result:=DirectoryExists(FLibsPath);
     if not result then
+<<<<<<< HEAD
     infoln('Tany_linuxaarch64: failed: searched libspath '+FLibsPath,etInfo);
+=======
+    ShowInfo('Searched but not found libspath '+FLibsPath);
+>>>>>>> upstream/master
     {$ENDIF}
   end;
 
   SearchLibraryInfo(result);
   if result then
   begin
+<<<<<<< HEAD
+=======
+    FLibsFound:=True;
+>>>>>>> upstream/master
     //todo: check if -XR is needed for fpc root dir Prepend <x> to all linker search paths
     FFPCCFGSnippet:=FFPCCFGSnippet+LineEnding+
     '-Fl'+IncludeTrailingPathDelimiter(FLibsPath)+LineEnding+ {buildfaq 1.6.4/3.3.1: the directory to look for the target  libraries}
@@ -100,7 +130,11 @@ end;
 function Tany_linuxaarch64.GetLibsLCL(LCL_Platform: string; Basepath: string): boolean;
 begin
   // todo: get gtk at least
+<<<<<<< HEAD
   result:=true;
+=======
+  result:=inherited;
+>>>>>>> upstream/master
 end;
 {$endif}
 
@@ -109,8 +143,15 @@ const
   DirName='aarch64-linux';
 var
   AsFile: string;
+<<<<<<< HEAD
 begin
   inherited;
+=======
+  BinPrefixTry: string;
+begin
+  result:=inherited;
+  if result then exit;
+>>>>>>> upstream/master
 
   AsFile:=FBinUtilsPrefix+'as'+GetExeExt;
 
@@ -121,6 +162,7 @@ begin
   // Also allow for (cross)binutils without prefix
   if not result then
   begin
+<<<<<<< HEAD
     FBinUtilsPrefix:='';
     AsFile:=FBinUtilsPrefix+'as'+GetExeExt;
     result:=SearchBinUtil(BasePath,AsFile);
@@ -149,6 +191,20 @@ begin
   SearchBinUtilsInfo(result);
   if result then
   begin
+=======
+    BinPrefixTry:='';
+    AsFile:=BinPrefixTry+'as'+GetExeExt;
+    result:=SearchBinUtil(BasePath,AsFile);
+    if not result then result:=SimpleSearchBinUtil(BasePath,DirName,AsFile);
+    if result then FBinUtilsPrefix:=BinPrefixTry;
+  end;
+
+  SearchBinUtilsInfo(result);
+
+  if result then
+  begin
+    FBinsFound:=true;
+>>>>>>> upstream/master
     // Configuration snippet for FPC
     FFPCCFGSnippet:=FFPCCFGSnippet+LineEnding+
     '-FD'+IncludeTrailingPathDelimiter(FBinUtilsPath)+LineEnding+ {search this directory for compiler utilities}
@@ -159,7 +215,10 @@ end;
 constructor Tany_linuxaarch64.Create;
 begin
   inherited Create;
+<<<<<<< HEAD
   FCrossModuleName:='any_linuxaarch64';
+=======
+>>>>>>> upstream/master
   FBinUtilsPrefix:='aarch64-linux-';
   FBinUtilsPath:='';
   FFPCCFGSnippet:='';
@@ -167,7 +226,11 @@ begin
   FTargetCPU:='aarch64';
   FTargetOS:='linux';
   FAlreadyWarned:=false;
+<<<<<<< HEAD
   infoln('Tany_linuxaarch64 crosscompiler loading',etDebug);
+=======
+  ShowInfo;
+>>>>>>> upstream/master
 end;
 
 destructor Tany_linuxaarch64.Destroy;

@@ -44,7 +44,7 @@ c:\development\cross\lib\mipsel-linux
 
 2. FPC-distributed GNU crossbinutils
 based on cross binaries from
-http://svn2.freepascal.org/svn/fpcbuild/binaries/i386-win32/
+http://svn.freepascal.org/svn/fpcbuild/binaries/i386-win32/
 
 Add a cross directory under the fpcup "root" installdir directory (e.g. c:\development\cross, and e.g. regular fpc sources in c:\development\fpc)
 Then place the binaries in c:\development\cross\bin\mipsel-linux
@@ -78,7 +78,7 @@ libgcov.a
 interface
 
 uses
-  Classes, SysUtils, m_crossinstaller,fpcuputil,fileutil;
+  Classes, SysUtils, m_crossinstaller, fileutil, fpcuputil;
 
 implementation
 type
@@ -87,7 +87,6 @@ type
 Tany_linuxmipsel = class(TCrossInstaller)
 private
   FAlreadyWarned: boolean; //did we warn user about errors and fixes already?
-  function TargetSignature: string;
 public
   function GetLibs(Basepath:string):boolean;override;
   {$ifndef FPCONLY}
@@ -99,33 +98,43 @@ public
 end;
 
 { Twin32_linuxmipsel }
-function Tany_linuxmipsel.TargetSignature: string;
-begin
-  result:=FTargetCPU+'-'+TargetOS;
-end;
 
 function Tany_linuxmipsel.GetLibs(Basepath:string): boolean;
 const
   DirName='mipsel-linux';
   LibName='libc.so';
 begin
+<<<<<<< HEAD
+=======
+  result:=FLibsFound;
+  if result then exit;
+>>>>>>> upstream/master
 
   // begin simple: check presence of library file in basedir
   result:=SearchLibrary(Basepath,LibName);
 
   // first search local paths based on libbraries provided for or adviced by fpc itself
   if not result then
+<<<<<<< HEAD
     result:=SimpleSearchLibrary(BasePath,DirName);
+=======
+    result:=SimpleSearchLibrary(BasePath,DirName,LibName);
+>>>>>>> upstream/master
 
   if result then
   begin
+    FLibsFound:=True;
     //todo: check if -XR is needed for fpc root dir Prepend <x> to all linker search paths
     FFPCCFGSnippet:=FFPCCFGSnippet+LineEnding+
     '-Xd'+LineEnding+ {buildfaq 3.4.1 do not pass parent /lib etc dir to linker}
     '-Fl'+IncludeTrailingPathDelimiter(FLibsPath)+LineEnding+ {buildfaq 1.6.4/3.3.1: the directory to look for the target  libraries}
     '-Xr/usr/lib';//+LineEnding+ {buildfaq 3.3.1: makes the linker create the binary so that it searches in the specified directory on the target system for libraries}
     //'-FL/usr/lib/ld-linux.so.2' {buildfaq 3.3.1: the name of the dynamic linker on the target};
+<<<<<<< HEAD
     infoln('Twin32_linuxmipsel: found libspath '+FLibsPath,etInfo);
+=======
+    ShowInfo('Found libspath '+FLibsPath,etInfo);
+>>>>>>> upstream/master
   end;
 end;
 
@@ -133,7 +142,7 @@ end;
 function Tany_linuxmipsel.GetLibsLCL(LCL_Platform: string; Basepath: string): boolean;
 begin
   // todo: get gtk at least
-  result:=true;
+  result:=inherited;
 end;
 {$endif}
 
@@ -146,7 +155,9 @@ const
   DirName='mipsel-linux';
 var
   AsFile: string;
+  BinPrefixTry:string;
 begin
+<<<<<<< HEAD
   inherited;
 
   AsFile:=FBinUtilsPrefix+'as'+GetExeExt;
@@ -173,10 +184,20 @@ begin
     result:=SearchBinUtil('/bin',
       AsFile);
   {$endif unix}
+=======
+  result:=inherited;
+  if result then exit;
+
+  AsFile:=FBinUtilsPrefix+'as'+GetExeExt;
+
+  result:=SearchBinUtil(BasePath,AsFile);
+  if not result then result:=SimpleSearchBinUtil(BasePath,DirName,AsFile);
+>>>>>>> upstream/master
 
   // Now also allow for mips-linux-gnu- binutilsprefix (e.g. codesourcery)
   if not result then
   begin
+<<<<<<< HEAD
     FBinutilsPrefix:='mips-linux-gnu-';
     AsFile:=FBinUtilsPrefix+'as'+GetExeExt;
     result:=SearchBinUtil(FBinUtilsPath,AsFile);
@@ -248,11 +269,42 @@ begin
   if not result then { try /usr/local/bin/<dirprefix>/ }
     result:=SearchBinUtil('/usr/local/bin/'+DirName,
       AsFile);
+=======
+    BinPrefixTry:='mips-linux-gnu-';
+    AsFile:=BinPrefixTry+'as'+GetExeExt;
+    result:=SearchBinUtil(BasePath,AsFile);
+    if not result then result:=SimpleSearchBinUtil(BasePath,DirName,AsFile);
+    if result then FBinUtilsPrefix:=BinPrefixTry;
+  end;
 
-  if not result then { try /usr/local/bin/ }
-    result:=SearchBinUtil('/usr/local/bin',
-      AsFile);
+  // Now also allow for mipsel-linux- binutilsprefix (e.g. using standard GCC crossbinutils)
+  if not result then
+  begin
+    BinPrefixTry:='mipsel-linux-';
+    AsFile:=BinPrefixTry+'as'+GetExeExt;
+    result:=SearchBinUtil(BasePath,AsFile);
+    if not result then result:=SimpleSearchBinUtil(BasePath,DirName,AsFile);
+    if result then FBinUtilsPrefix:=BinPrefixTry;
+  end;
 
+  // Now also allow for empty binutilsprefix:
+  if not result then
+  begin
+    BinPrefixTry:='';
+    AsFile:=BinPrefixTry+'as'+GetExeExt;
+    result:=SearchBinUtil(BasePath,AsFile);
+    if not result then result:=SimpleSearchBinUtil(BasePath,DirName,AsFile);
+    if result then FBinUtilsPrefix:=BinPrefixTry;
+  end;
+
+  if result then
+  begin
+    FBinsFound:=true;
+>>>>>>> upstream/master
+
+    //option: check as version with something like as --version, and check the targte against what is needed !!
+
+<<<<<<< HEAD
   if not result then { try /usr/bin/ }
     result:=SearchBinUtil('/usr/bin',
       AsFile);
@@ -265,6 +317,10 @@ begin
   if result then
   begin
     infoln(FCrossModuleName + ': found binutils '+FBinUtilsPath,etInfo);
+=======
+
+    ShowInfo('Found binutils '+FBinUtilsPath,etInfo);
+>>>>>>> upstream/master
     // Architecture etc:
     if StringListStartsWith(FCrossOpts,'-Cp')=-1 then
       FCrossOpts.Add('-CpMIPS32R2'); //Probably supported by most devices today
@@ -279,11 +335,6 @@ begin
   end
   else
   begin
-    infoln(FCrossModuleName + ': could not find bin path. Please fill '+IncludeTrailingPathDelimiter(BasePath)+'..\cross\bin\'+DirName+LineEnding+
-    ' with cross binutils for Android/Linux MIPSEL, such as mipsel-linux-android-as.exe '+LineEnding+
-    ' e.g. from the Android NDK.'+LineEnding+
-    'See http://wiki.lazarus.freepascal.org/MIPS.'
-    ,etError);
     FAlreadyWarned:=true;
   end;
 end;
@@ -291,8 +342,7 @@ end;
 constructor Tany_linuxmipsel.Create;
 begin
   inherited Create;
-  FCrossModuleName:='any_linuxmipsel';
-  // binutilsprefix can be modified later in GetBinUtils  
+  // binutilsprefix can be modified later in GetBinUtils
   FBinUtilsPrefix:='mipsel-linux-android-'; //Used in Android NDK
   FBinUtilsPath:='';
   { Use current trunk compiler to build, not stable bootstrap, e.g. in light of bug
@@ -304,7 +354,7 @@ begin
   FTargetCPU:='mipsel';
   FTargetOS:='linux';
   FAlreadyWarned:=false;
-  infoln('Twin32_linuxmipsel crosscompiler loading',etDebug);
+  ShowInfo;
 end;
 
 destructor Tany_linuxmipsel.Destroy;

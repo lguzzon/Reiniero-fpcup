@@ -77,9 +77,16 @@ const
   HelpConfig='helpoptions.xml';
   // Packages:
   PackageConfig='packagefiles.xml';
+  // FPC defines (source cache):
+  FPCDefines='fpcdefines.xml';
+
   // Versions used when new config files are generated.
   // Lazarus pre 1.0: 106
+<<<<<<< HEAD
   // We can assume Lazarus SVN can parse this version:
+=======
+  // We can assume Lazarus trunk can parse this version:
+>>>>>>> upstream/master
   TrunkVersionNewEnvironmentConfig='110';
   TrunkLazarusNewEnvironmentConfig='1.7';
   // We use a hardcoded version for Lazarus below
@@ -389,7 +396,7 @@ begin
     Doc.AppendChild(Doc.CreateElement('CONFIG'));
     end
   else
-    ReadXMLFile(Doc,AFilename);
+    ReadXMLFile(Doc,AFilename,[xrfAllowLowerThanInAttributeValue,xrfAllowSpecialCharsInAttributeValue,xrfAllowSpecialCharsInComments]);
   bChanged:=false;
 end;
 
@@ -488,8 +495,14 @@ begin
                 3 : NewConfig.SetValue('EnvironmentOptions/Version/Value', '108'); //for version 1.3
                 4 : NewConfig.SetValue('EnvironmentOptions/Version/Value', '108'); //for version 1.4
                 5 : NewConfig.SetValue('EnvironmentOptions/Version/Value', '109'); //for version 1.5
+<<<<<<< HEAD
               else
                 begin //-1 or higher than 5 set to trunk version
+=======
+                6 : NewConfig.SetValue('EnvironmentOptions/Version/Value', '109'); //for version 1.6
+              else
+                begin //-1 or higher than 6 set to trunk version
+>>>>>>> upstream/master
                   NewConfig.SetValue('EnvironmentOptions/Version/Value', TrunkVersionNewEnvironmentConfig);
                   NewConfig.SetValue('EnvironmentOptions/Version/Lazarus', TrunkLazarusNewEnvironmentConfig);
                 end;

@@ -41,11 +41,17 @@ Adapt (add) for other setups
 interface
 
 uses
+<<<<<<< HEAD
   Classes, SysUtils, m_crossinstaller,fpcuputil,fileutil;
 
 implementation
 const
   CrossModuleName='Tany_linux386';
+=======
+  Classes, SysUtils, m_crossinstaller, fileutil;
+
+implementation
+>>>>>>> upstream/master
 
 type
 
@@ -53,7 +59,10 @@ type
 Tany_linux386 = class(TCrossInstaller)
 private
   FAlreadyWarned: boolean; //did we warn user about errors and fixes already?
+<<<<<<< HEAD
   function TargetSignature: string;
+=======
+>>>>>>> upstream/master
 public
   function GetLibs(Basepath:string):boolean;override;
   {$ifndef FPCONLY}
@@ -65,22 +74,35 @@ public
 end;
 
 { Tany_linux386 }
+<<<<<<< HEAD
 function Tany_linux386.TargetSignature: string;
 begin
   result:=FTargetCPU+'-'+TargetOS;
 end;
+=======
+>>>>>>> upstream/master
 
 function Tany_linux386.GetLibs(Basepath:string): boolean;
 const
   DirName='i386-linux';
   LibName='libc.so';
 begin
+<<<<<<< HEAD
+=======
+  result:=FLibsFound;
+  if result then exit;
+
+>>>>>>> upstream/master
   // begin simple: check presence of library file in basedir
   result:=SearchLibrary(Basepath,LibName);
 
   // first search local paths based on libbraries provided for or adviced by fpc itself
   if not result then
+<<<<<<< HEAD
     result:=SimpleSearchLibrary(BasePath,DirName);
+=======
+    result:=SimpleSearchLibrary(BasePath,DirName,LibName);
+>>>>>>> upstream/master
 
   if not result then
   begin
@@ -88,11 +110,16 @@ begin
     FLibsPath:='/usr/lib/i386-linux-gnu'; //debian Jessie+ convention
     result:=DirectoryExists(FLibsPath);
     if not result then
+<<<<<<< HEAD
     infoln('Tany_linux386: failed: searched libspath '+FLibsPath,etInfo);
+=======
+    ShowInfo('Searched but not found libspath '+FLibsPath);
+>>>>>>> upstream/master
     {$ENDIF}
   end;
 
   SearchLibraryInfo(result);
+<<<<<<< HEAD
   if result then
   begin
     //todo: check if -XR is needed for fpc root dir Prepend <x> to all linker search paths
@@ -100,6 +127,17 @@ begin
     '-Fl'+IncludeTrailingPathDelimiter(FLibsPath)+LineEnding+ {buildfaq 1.6.4/3.3.1: the directory to look for the target  libraries}
     '-Xr/usr/lib';//+LineEnding+ {buildfaq 3.3.1: makes the linker create the binary so that it searches in the specified directory on the target system for libraries}
     //'-FL/usr/lib/ld-linux.so.2' {buildfaq 3.3.1: the name of the dynamic linker on the target};
+=======
+
+  if result then
+  begin
+    FLibsFound:=True;
+    //todo: check if -XR is needed for fpc root dir Prepend <x> to all linker search paths
+    FFPCCFGSnippet:=FFPCCFGSnippet+LineEnding+
+    '-Fl'+IncludeTrailingPathDelimiter(FLibsPath)+LineEnding+ {buildfaq 1.6.4/3.3.1: the directory to look for the target  libraries}
+    //'-FL/lib/ld-linux.so.2'+LineEnding+ {buildfaq 3.3.1: the name of the dynamic linker on the target ... can also be ld-linux.so.3 (Arch) ... tricky}
+    '-Xr/usr/lib'; {buildfaq 3.3.1: makes the linker create the binary so that it searches in the specified directory on the target system for libraries}
+>>>>>>> upstream/master
   end;
 end;
 
@@ -107,7 +145,11 @@ end;
 function Tany_linux386.GetLibsLCL(LCL_Platform: string; Basepath: string): boolean;
 begin
   // todo: get gtk at least
+<<<<<<< HEAD
   result:=true;
+=======
+  result:=inherited;
+>>>>>>> upstream/master
 end;
 {$endif}
 
@@ -116,18 +158,30 @@ const
   DirName='i386-linux';
 var
   AsFile: string;
+<<<<<<< HEAD
 begin
   inherited;
+=======
+  BinPrefixTry: string;
+begin
+  result:=inherited;
+  if result then exit;
+>>>>>>> upstream/master
 
   AsFile:=FBinUtilsPrefix+'as'+GetExeExt;
 
   result:=SearchBinUtil(BasePath,AsFile);
+<<<<<<< HEAD
+=======
+
+>>>>>>> upstream/master
   if not result then
     result:=SimpleSearchBinUtil(BasePath,DirName,AsFile);
 
   // Also allow for (cross)binutils without prefix
   if not result then
   begin
+<<<<<<< HEAD
     FBinUtilsPrefix:='';
     AsFile:=FBinUtilsPrefix+'as'+GetExeExt;
     result:=SearchBinUtil(BasePath,AsFile);
@@ -160,13 +214,38 @@ begin
     FFPCCFGSnippet:=FFPCCFGSnippet+LineEnding+
     '-FD'+IncludeTrailingPathDelimiter(FBinUtilsPath)+LineEnding+ {search this directory for compiler utilities}
     '-XP'+FBinUtilsPrefix+LineEnding {Prepend the binutils names};
+=======
+    BinPrefixTry:='';
+    AsFile:=BinPrefixTry+'as'+GetExeExt;
+    result:=SearchBinUtil(BasePath,AsFile);
+    if not result then result:=SimpleSearchBinUtil(BasePath,DirName,AsFile);
+    if result then FBinUtilsPrefix:=BinPrefixTry;
+  end;
+
+  SearchBinUtilsInfo(result);
+
+  if result then
+  begin
+    FBinsFound:=true;
+    // Configuration snippet for FPC
+    FFPCCFGSnippet:=FFPCCFGSnippet+LineEnding+
+    '-FD'+IncludeTrailingPathDelimiter(FBinUtilsPath)+LineEnding+ {search this directory for compiler utilities}
+    '-XP'+FBinUtilsPrefix {Prepend the binutils names}
+    {$ifdef MSWINDOWS}
+    +LineEnding+'-Tlinux'; {target operating system}
+    {$endif}
+    ;
+>>>>>>> upstream/master
   end;
 end;
 
 constructor Tany_linux386.Create;
 begin
   inherited Create;
+<<<<<<< HEAD
   FCrossModuleName:='any_linux386';
+=======
+>>>>>>> upstream/master
   FBinUtilsPrefix:='i386-linux-';
   FBinUtilsPath:='';
   FFPCCFGSnippet:='';
@@ -174,7 +253,11 @@ begin
   FTargetCPU:='i386';
   FTargetOS:='linux';
   FAlreadyWarned:=false;
+<<<<<<< HEAD
   infoln('Tany_linux386 crosscompiler loading',etDebug);
+=======
+  ShowInfo;
+>>>>>>> upstream/master
 end;
 
 destructor Tany_linux386.Destroy;

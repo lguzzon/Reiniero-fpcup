@@ -23,7 +23,11 @@ Another solution would be to get the relevant binutils/libs from a working Linux
 interface
 
 uses
+<<<<<<< HEAD
   Classes, SysUtils, m_crossinstaller, fpcuputil;
+=======
+  Classes, SysUtils, m_crossinstaller;
+>>>>>>> upstream/master
 
 implementation
 type
@@ -35,9 +39,12 @@ private
 
 public
   function GetLibs(Basepath:string):boolean;override;
+<<<<<<< HEAD
   {$ifndef FPCONLY}
   function GetLibsLCL(LCL_Platform:string; Basepath:string):boolean;override;
   {$endif}
+=======
+>>>>>>> upstream/master
   function GetBinUtils(Basepath:string):boolean;override;
   constructor Create;
   destructor Destroy; override;
@@ -47,13 +54,26 @@ end;
 
 function TFreeBSD_Linux386.GetLibs(Basepath:string): boolean;
 begin
+<<<<<<< HEAD
+=======
+  result:=FLibsFound;
+  if result then exit;
+
+>>>>>>> upstream/master
   FLibsPath:='/compat/linux/lib';
   result:=DirectoryExists(FLibsPath);
   if result then
   begin
+<<<<<<< HEAD
     //todo: check if -XR is needed for fpc root dir Prepend <x> to all linker search paths
     FFPCCFGSnippet:=FFPCCFGSnippet+LineEnding+
     '-Xr'+IncludeTrailingPathDelimiter(FLibsPath) {set linker's rlink path };
+=======
+    FLibsFound:=true;
+    //todo: check if -XR is needed for fpc root dir Prepend <x> to all linker search paths
+    FFPCCFGSnippet:=FFPCCFGSnippet+LineEnding+
+    '-Xr'+IncludeTrailingPathDelimiter(FLibsPath); //set linker's rlink path
+>>>>>>> upstream/master
   end;
   {
   perhaps these?!? todo: check.
@@ -63,6 +83,7 @@ begin
   }
 end;
 
+<<<<<<< HEAD
 {$ifndef FPCONLY}
 function TFreeBSD_Linux386.GetLibsLCL(LCL_Platform: string; Basepath: string): boolean;
 begin
@@ -70,13 +91,23 @@ begin
 end;
 {$endif}
 
+=======
+>>>>>>> upstream/master
 function TFreeBSD_Linux386.GetBinUtils(Basepath:string): boolean;
 var
   i:integer;
 begin
+<<<<<<< HEAD
   inherited;
   //todo: remove once done
   infoln('TFreeBSD_Linux386: Experimental, not finished. Stopping now.',etError);
+=======
+  result:=inherited;
+  if result then exit;
+
+  //todo: remove once done
+  ShowInfo('Experimental, not finished. Stopping now.',etError);
+>>>>>>> upstream/master
   result:=false;
 
   FBinUtilsPath:='/compat/linux/bin'; //these do not contain as etc though
@@ -84,6 +115,10 @@ begin
   result:=FileExists(FBinUtilsPath+'/as'); // let the assembler be our coalmine canary
   if result then
   begin
+<<<<<<< HEAD
+=======
+    FBinsFound:=true;
+>>>>>>> upstream/master
     // Configuration snippet for FPC
     FFPCCFGSnippet:=FFPCCFGSnippet+LineEnding+
     '-FD'+IncludeTrailingPathDelimiter(FBinUtilsPath)+LineEnding+ {search this directory for compiler utilities}
@@ -95,14 +130,22 @@ end;
 constructor TFreeBSD_Linux386.Create;
 begin
   inherited Create;
+<<<<<<< HEAD
   FCrossModuleName:='FreeBSD_Linux386';
+=======
+  FCrossModuleNamePrefix:='FreeBSD';
+>>>>>>> upstream/master
   FBinUtilsPath:='';
   FBinUtilsPrefix:='';
   FFPCCFGSnippet:='';
   FLibsPath:='';
   FTargetCPU:='i386';
   FTargetOS:='linux';
+<<<<<<< HEAD
   infoln('TFreeBSD_Linux386 crosscompiler loading',etDebug);
+=======
+  ShowInfo;
+>>>>>>> upstream/master
 end;
 
 destructor TFreeBSD_Linux386.Destroy;

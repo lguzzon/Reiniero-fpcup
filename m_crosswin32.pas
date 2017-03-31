@@ -33,7 +33,11 @@ Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 interface
 
 uses
+<<<<<<< HEAD
   Classes, SysUtils, m_crossinstaller,fpcuputil;
+=======
+  Classes, SysUtils, m_crossinstaller;
+>>>>>>> upstream/master
 
 implementation
 type
@@ -45,9 +49,12 @@ private
 
 public
   function GetLibs(Basepath:string):boolean;override;
+<<<<<<< HEAD
   {$ifndef FPCONLY}
   function GetLibsLCL(LCL_Platform:string; Basepath:string):boolean;override;
   {$endif}
+=======
+>>>>>>> upstream/master
   function GetBinUtils(Basepath:string):boolean;override;
   constructor Create;
   destructor Destroy; override;
@@ -57,6 +64,7 @@ end;
 
 function TWin32.GetLibs(Basepath:string): boolean;
 begin
+<<<<<<< HEAD
   FLibsPath:='';
   result:=true;
 end;
@@ -74,19 +82,44 @@ begin
   FBinUtilsPath:='';
   FBinUtilsPrefix:='';
   result:=true;
+=======
+  result:=FLibsFound;
+  if result then exit;
+  FLibsPath:='';
+  result:=true;
+  FLibsFound:=true;
+end;
+
+function TWin32.GetBinUtils(Basepath:string): boolean;
+begin
+  result:=inherited;
+  if result then exit;
+  FBinUtilsPath:='';
+  FBinUtilsPrefix:='';
+  result:=true;
+  FBinsFound:=true;
+>>>>>>> upstream/master
 end;
 
 constructor TWin32.Create;
 begin
   inherited Create;
+<<<<<<< HEAD
   FCrossModuleName:='Win32';
+=======
+  FCrossModuleNamePrefix:='TWin64';
+>>>>>>> upstream/master
   FBinUtilsPath:=''; //override parent that has a warning text here
   FBinUtilsPrefix:=''; //override parent that has a warning text here
   FFPCCFGSnippet:=''; //no need to change fpc.cfg
   FLibsPath:='';
   FTargetCPU:='i386';
   FTargetOS:='win32';
+<<<<<<< HEAD
   infoln('TWin32 crosscompiler loading',etDebug);
+=======
+  ShowInfo;
+>>>>>>> upstream/master
 end;
 
 destructor TWin32.Destroy;

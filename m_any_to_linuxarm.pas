@@ -41,7 +41,7 @@ Also looks for android cross compiler bin and bin without any prefix
 interface
 
 uses
-  Classes, SysUtils, m_crossinstaller,fpcuputil,fileutil;
+  Classes, SysUtils, m_crossinstaller, fileutil, fpcuputil;
 
 implementation
 type
@@ -50,7 +50,6 @@ type
 Tany_linuxarm = class(TCrossInstaller)
 private
   FAlreadyWarned: boolean; //did we warn user about errors and fixes already?
-  function TargetSignature: string;
 public
   function GetLibs(Basepath:string):boolean;override;
   {$ifndef FPCONLY}
@@ -62,28 +61,44 @@ public
 end;
 
 { Tany_linuxarm }
+<<<<<<< HEAD
 function Tany_linuxarm.TargetSignature: string;
 begin
   result:=FTargetCPU+'-'+TargetOS;
 end;
+=======
+>>>>>>> upstream/master
 
 function Tany_linuxarm.GetLibs(Basepath:string): boolean;
 const
   DirName='arm-linux';
   LibName='libc.so';
 begin
+  result:=FLibsFound;
+  if result then exit;
 
   // begin simple: check presence of library file in basedir
   result:=SearchLibrary(Basepath,LibName);
 
   // local paths based on libbraries provided for or adviced by fpc itself
   if not result then
+<<<<<<< HEAD
     result:=SimpleSearchLibrary(BasePath,DirName);
+=======
+    result:=SimpleSearchLibrary(BasePath,DirName,LibName);
+  // also check in the gnueabi directory
+  if not result then
+     result:=SimpleSearchLibrary(BasePath,DirName+'-gnueabi',LibName);
+  // also check in the gnueabihf directory
+  if not result then
+     result:=SimpleSearchLibrary(BasePath,DirName+'-gnueabihf',LibName);
+>>>>>>> upstream/master
 
   SearchLibraryInfo(result);
 
   if result then
   begin
+    FLibsFound:=True;
     //todo: check if -XR is needed for fpc root dir Prepend <x> to all linker search paths
     //todo: implement -Xr for other platforms if this setup works
     FFPCCFGSnippet:=FFPCCFGSnippet+LineEnding+
@@ -107,7 +122,11 @@ begin
   end
   else
   begin
+<<<<<<< HEAD
     infoln(FCrossModuleName+ ': You MAY want to copy your /lib, /usr/lib, /usr/lib/arm-linux-gnueabihf (Raspberry Pi Raspbian) from your device to your cross lib directory.',etInfo);
+=======
+    ShowInfo('You MAY want to copy your /lib, /usr/lib, /usr/lib/arm-linux-gnueabihf (Raspberry Pi Raspbian) from your device to your cross lib directory.');
+>>>>>>> upstream/master
   end;
 end;
 
@@ -115,8 +134,8 @@ end;
 function Tany_linuxarm.GetLibsLCL(LCL_Platform: string; Basepath: string): boolean;
 begin
   // todo: get gtk at least, add to FFPCCFGSnippet
-  infoln(FCrossModuleName+ ': implement lcl libs path from basepath '+BasePath+' for platform '+LCL_Platform,etdebug);
-  result:=true;
+  ShowInfo('Implement lcl libs path from basepath '+BasePath+' for platform '+LCL_Platform,etDebug);
+  result:=inherited;
 end;
 {$endif}
 
@@ -125,8 +144,14 @@ const
   DirName='arm-linux';
 var
   AsFile: string;
+  BinPrefixTry:string;
 begin
+<<<<<<< HEAD
   inherited;
+=======
+  result:=inherited;
+  if result then exit;
+>>>>>>> upstream/master
 
   // Start with any names user may have given
   AsFile:=FBinUtilsPrefix+'as'+GetExeExt;
@@ -138,6 +163,7 @@ begin
   // Also allow for crossfpc naming
   if not result then
   begin
+<<<<<<< HEAD
     FBinUtilsPrefix:='arm-linux-';
     AsFile:=FBinUtilsPrefix+'as'+GetExeExt;
     if not result then
@@ -182,10 +208,66 @@ begin
     {$ifdef mswindows}
     infoln(FCrossModuleName+ ': suggestion for cross binutils: the crossfpc binutils, mirrored at the fpcup download site.',etInfo);
     {$endif}
+=======
+    BinPrefixTry:='arm-linux-gnueabi';
+    AsFile:=BinPrefixTry+'as'+GetExeExt;
+    result:=SimpleSearchBinUtil(BasePath,DirName,AsFile);
+    // also check in the gnueabi directory
+    if not result then
+       result:=SimpleSearchBinUtil(BasePath,DirName+'-gnueabi',AsFile);
+    if result then FBinUtilsPrefix:=BinPrefixTry;
+  end;
+
+  // Also allow for hardfloat crossbinutils
+  if not result then
+  begin
+    //if StringListStartsWith(FCrossOpts,'-CaEABIHF')>-1 then
+    begin
+      BinPrefixTry:='arm-linux-gnueabihf-';
+      AsFile:=BinPrefixTry+'as'+GetExeExt;
+      result:=SimpleSearchBinUtil(BasePath,DirName,AsFile);
+      // also check in the gnueabihf directory
+      if not result then
+         result:=SimpleSearchBinUtil(BasePath,DirName+'-gnueabihf',AsFile);
+      if result then FBinUtilsPrefix:=BinPrefixTry;
+    end;
+  end;
+
+  // Also allow for android crossbinutils
+  if not result then
+  begin
+    BinPrefixTry:='arm-linux-androideabi-';//standard eg in Android NDK 9
+    AsFile:=BinPrefixTry+'as'+GetExeExt;
+    result:=SimpleSearchBinUtil(BasePath,DirName,AsFile);
+    if result then FBinUtilsPrefix:=BinPrefixTry;
+  end;
+
+  // Last resort: also allow for crossbinutils without prefix, but in correct directory
+  if not result then
+  begin
+    BinPrefixTry:='';
+    AsFile:=BinPrefixTry+'as'+GetExeExt;
+    result:=SimpleSearchBinUtil(BasePath,DirName,AsFile);
+    // also check in the gnueabi directory
+    if not result then
+       result:=SimpleSearchBinUtil(BasePath,DirName+'-gnueabi',AsFile);
+    // also check in the gnueabihf directory
+    if not result then
+       result:=SimpleSearchBinUtil(BasePath,DirName+'-gnueabihf',AsFile);
+    if result then FBinUtilsPrefix:=BinPrefixTry;
+  end;
+
+  SearchBinUtilsInfo(result);
+
+  if not result then
+  begin
+>>>>>>> upstream/master
     FAlreadyWarned:=true;
   end
   else
   begin
+    FBinsFound:=true;
+
     { for raspberry pi look into
     instruction set
     -CpARMV6Z (not 7)
@@ -201,7 +283,11 @@ begin
     if StringListStartsWith(FCrossOpts,'-Cp')=-1 then
     begin
       FCrossOpts.Add('-CpARMV6'); //apparently earlier instruction sets unsupported by Android and Raspberry Pi
+<<<<<<< HEAD
       infoln(FCrossModuleName+ ': did not find any -Cp architecture parameter; using -CpARMV6.',etInfo);
+=======
+      ShowInfo('Did not find any -Cp architecture parameter; using -CpARMV6.',etInfo);
+>>>>>>> upstream/master
     end;
 
     // Warn user to check things
@@ -210,7 +296,7 @@ begin
       // Source: http://forum.lazarus.freepascal.org/index.php/topic,23075.msg137838.html#msg137838
       // http://lists.freepascal.org/lists/fpc-devel/2013-May/032093.html
       // -dFPC_ARMHF is only used for (cross) compiler generation, not useful when compiling end user
-      infoln(FCrossModuleName+ ': found -CaEABIHF cross compile option. Please make sure you specified -dFPC_ARMHF in your FPCOPT in order to build a hard-float cross-compiler.',etWarning);
+      ShowInfo('Found -CaEABIHF cross compile option. Please make sure you specified -dFPC_ARMHF in your FPCOPT in order to build a hard-float cross-compiler.',etWarning);
     end;
 
     // Configuration snippet for FPC
@@ -219,7 +305,7 @@ begin
     '-FD'+IncludeTrailingPathDelimiter(FBinUtilsPath)+LineEnding+ {search this directory for compiler utilities}
     '-XP'+FBinUtilsPrefix; {Prepend the binutils names}
     { don't know if this is still relevant for 2.7.x and for which linker
-    '-darm'+LineEnding+ {pass arm to linker}
+    '-darm'+LineEnding+
     }
   end;
 end;
@@ -227,7 +313,10 @@ end;
 constructor Tany_linuxarm.Create;
 begin
   inherited Create;
+<<<<<<< HEAD
   FCrossModuleName:='any_linuxarm';
+=======
+>>>>>>> upstream/master
   FBinUtilsPrefix:='arm-linux-'; //crossfpc nomenclature; module will also search for android crossbinutils
   FBinUtilsPath:='';
   FCompilerUsed:=ctBootstrap;
@@ -236,7 +325,7 @@ begin
   FTargetCPU:='arm';
   FTargetOS:='linux';
   FAlreadyWarned:=false;
-  infoln(FCrossModuleName+ ': crosscompiler loading',etDebug);
+  ShowInfo;
 end;
 
 destructor Tany_linuxarm.Destroy;

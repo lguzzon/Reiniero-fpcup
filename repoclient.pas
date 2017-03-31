@@ -51,6 +51,7 @@ type
   TRepoClient = class(TObject)
   protected
     FDesiredRevision: string;
+    FDesiredBranch: string;
     FHTTPProxyHost: string;
     FHTTPProxyPassword: string;
     FHTTPProxyPort: integer;
@@ -63,24 +64,33 @@ type
     FReturnCode: integer;
     FReturnOutput: string;
     FVerbose: boolean;
+<<<<<<< HEAD
+=======
+    FModuleName: string;
+>>>>>>> upstream/master
     FExportOnly: boolean;
     //Performs a checkout/initial download
     //Note: it's often easier to call CheckOutOrUpdate
-    procedure CheckOut; virtual;
-    // Double quotes unquoted filenames if on Windows. Useful before running commands
-    function DoubleQuoteIfNeeded(FileName: string): string;
+    procedure CheckOut(UseForce:boolean=false); virtual;
     function GetLocalRevision: string; virtual;
-    function GetRepoExecutable: string; virtual;
     // Makes sure non-empty strings have a / at the end.
     function IncludeTrailingSlash(AValue: string): string; virtual;
     procedure SetDesiredRevision(AValue: string); virtual;
+    procedure SetDesiredBranch(AValue: string); virtual;
     procedure SetLocalRepository(AValue: string); virtual;
     procedure SetRepositoryURL(AValue: string); virtual;
     procedure SetRepoExecutable(AValue: string); virtual;
     procedure SetVerbose(AValue: boolean); virtual;
     procedure SetExportOnly(AValue: boolean); virtual;
     function GetValidClient:boolean;
+<<<<<<< HEAD
     function GetRepoExecutableName:string;virtual;
+=======
+    // Search for installed version control client executable (might return just a filename if in the OS path)
+    function GetRepoExecutable:string;virtual;
+    function GetRepoExecutableName:string;virtual;
+    function FindRepoExecutable: string; virtual;
+>>>>>>> upstream/master
     //Performs an update (pull)
     //Note: it's often easier to call CheckOutOrUpdate; that also has some more network error recovery built in
     procedure Update; virtual;
@@ -94,8 +104,6 @@ type
     // Executes command and returns result code
     // Note: caller is responsible for quoting: to do: find out again in processutils what rules apply?!?
     function Execute(Command: string): integer; virtual;
-    // Search for installed version control client executable (might return just a filename if in the OS path)
-    function FindRepoExecutable: string; virtual;
     // Creates diff of all changes in the local directory versus the remote version
     function GetDiffAll: string; virtual;
     // Shows commit log for local directory
@@ -106,6 +114,8 @@ type
     procedure Revert; virtual;
     // Get/set desired revision to checkout/pull to (if none given, use HEAD/tip/newest)
     property DesiredRevision: string read FDesiredRevision write SetDesiredRevision;
+    // Get/set desired branch to checkout/pull
+    property DesiredBranch: string read FDesiredBranch write SetDesiredBranch;
     // If using http transport, an http proxy can be used. Proxy hostname/ip address
     property HTTPProxyHost: string read FHTTPProxyHost write FHTTPProxyHost;
     // If using http transport, an http proxy can be used. Proxy port
@@ -133,6 +143,10 @@ type
     property RepoExecutable: string read GetRepoExecutable write SetRepoExecutable;
     // Show additional console/log output?
     property Verbose: boolean read FVerbose write SetVerbose;
+<<<<<<< HEAD
+=======
+    property ModuleName: string read FModuleName write FModuleName;
+>>>>>>> upstream/master
     property ExportOnly: boolean read FExportOnly write SetExportOnly;
     property ValidClient: boolean read GetValidClient;
     property RepoExecutableName: string read GetRepoExecutableName;
@@ -142,6 +156,9 @@ type
 
 
 implementation
+
+uses
+  fpcuputil;
 
 { TRepoClient }
 
@@ -176,6 +193,14 @@ begin
     Exit;
   FDesiredRevision := AValue;
 end;
+
+procedure TRepoClient.SetDesiredBranch(AValue: string);
+begin
+  if FDesiredBranch = AValue then
+    Exit;
+  FDesiredBranch := AValue;
+end;
+
 
 procedure TRepoClient.SetLocalRepository(AValue: string);
  // Sets local repository, converting relative path to absolute path
@@ -226,6 +251,7 @@ end;
 
 
 function TRepoClient.GetValidClient:boolean;
+<<<<<<< HEAD
 begin
   result:=( (Length(FRepoExecutable)<>0) AND (FileExists(FRepoExecutable)) );
 end;
@@ -241,9 +267,13 @@ begin
   {$ELSE}
   Result := filename;
   {$ENDIF}
+=======
+begin
+  result:=( (Length(FRepoExecutable)<>0) AND (FileExists(FRepoExecutable)) );
+>>>>>>> upstream/master
 end;
 
-procedure TRepoClient.CheckOut;
+procedure TRepoClient.CheckOut(UseForce:boolean=false);
 begin
   raise Exception.Create('TRepoClient descendants must implement CheckOut by themselves.');
 end;
@@ -251,6 +281,7 @@ end;
 procedure TRepoClient.CheckOutOrUpdate;
 begin
   raise Exception.Create('TRepoClient descendants must implement CheckOutOrUpdate by themselves.');
+<<<<<<< HEAD
 end;
 
 procedure TRepoClient.ExportRepo;
@@ -258,6 +289,15 @@ begin
   raise Exception.Create('TRepoClient descendants must implement ExportRepo by themselves.');
 end;
 
+=======
+end;
+
+procedure TRepoClient.ExportRepo;
+begin
+  raise Exception.Create('TRepoClient descendants must implement ExportRepo by themselves.');
+end;
+
+>>>>>>> upstream/master
 
 function TRepoClient.Commit(Message: string): boolean;
 begin
@@ -324,7 +364,7 @@ begin
   FReturnCode := 0;
   FReturnOutput := '';
   FRepoExecutable := '';
-  FindRepoExecutable; //Do this now so hopefully the hgExecutable property is valid.
+  FindRepoExecutable;
 end;
 
 destructor TRepoClient.Destroy;
